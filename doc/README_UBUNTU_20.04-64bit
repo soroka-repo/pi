@@ -5,6 +5,8 @@
 # ___ write the ubuntu-20.04-preinstalled-server-amd64+raspi.img to the SD card
 
 # ___ boot the SD username/password is ubuntu/ubuntu update to a strong password
+      # SWITCH Desktops after you enter the the username click the gear in the lower left to choose the desktop
+      # select xubuntu the other 2 (ubuntu and xfce) seem to get stuck with a blank screen
 
 # ___ verify that you got a dhcp assigned IP addr
  ip addr;
@@ -22,6 +24,7 @@
  sudo su;
  cd /etc;
  for i in "passwd" "group" "shadow" "gshadow"; do sed 's/ubuntu/joeuser/g' -i $i; done;
+ sed 's/Ubuntu/soroka/g' -i /etc/passwd
  mv /home/ubuntu /home/joeuser;
  reboot; ### just to make sure you did it correctly and we can still log on
 
@@ -46,8 +49,7 @@ network:
 
 
 # ___ change the hostname from: ubuntu to: something meaningful to you, this is for security the hackers will look for hostname "ubuntu"
-
-
+ dudo hostname <new hostname>;
 
 # ___ install docker
  sudo su;
@@ -71,7 +73,7 @@ network:
  mkdir -p ~/HA/config;
  mkdir -p ~/HA/docker-build;
  cd ~/HA/docker-build;
- vi docker-compose.yml; ### create the following obderving the yaml colmn formatting
+ vi docker-compose.yml; ### create the following observing the yaml column formatting
 
  $ cat docker-compose.yml
 
@@ -101,7 +103,33 @@ services:
 
 ### to get to homeassistant your IP port 8123 (find your IP = ifconfig or ip addr)
  http://<your IP addr>:8123
+### create youre userid and password, select your map location,click in the notification tab to see if any Home devices were found and configure them. 
+
+
+# ___ try a differeint level of home assistant moving from stable to latest
+ cd ~/HA/docker-build;
+ sudo docker-compose stop; ### stop home assistant instance
+ sudo docker-compose rm; ### remove the home assistant instance, this will also delete the HA /config files
+                         ### DO NOT DO the rm command unless you wand to start over
+ vi docker-compose.yml; ### change the following stable to latest observing the yaml column formatting
+
+ $ cat docker-compose.yml
+
+version: '3'
+services:
+  homeassistant:
+    container_name: home-assistant
+    image: homeassistant/raspberrypi4-homeassistant:latest
+    volumes:
+      - /home/soroka/HA/config
+    environment:
+      - TZ=America/New_York
+    restart: always
+    network_mode: host
  
+
+ sudo docker-compose pull;
+ sudo docker-compose up -d --build homeassistant
 
 
 
