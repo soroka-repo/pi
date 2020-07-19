@@ -1,0 +1,28 @@
+version: '3'
+services:
+  homeassistant:
+    container_name: home-assistant
+    image: homeassistant/raspberrypi4-homeassistant:stable
+    volumes:
+      - /home/soroka/HA:/config
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - TZ=America/New_York
+    restart: always
+    network_mode: host
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:8123"]
+      interval: 30s
+      timeout: 10s
+      retries: 6
+
+  portainer:
+    container_name: portainer
+    image: portainer/portainer
+    ports:
+      - 9000:9000
+    volumes:
+      - /home/soroka/portainer:/data:rw
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: "always" 
+
