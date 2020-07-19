@@ -68,10 +68,40 @@ network:
  
 
 # ___ run Home Assistant, this is just the first attempt we need to build a app stack with docker-composre, lets just take a look...
- sudo docker run homeassistant/raspberrypi4-homeassistant;
+ mkdir -p ~/HA/config;
+ mkdir -p ~/HA/docker-build;
+ cd ~/HA/docker-build;
+ vi docker-compose.yml; ### create the following obderving the yaml colmn formatting
+
+ $ cat docker-compose.yml
+
+version: '3'
+services:
+  homeassistant:
+    container_name: home-assistant
+    image: homeassistant/raspberrypi4-homeassistant:stable
+    volumes:
+      - /home/soroka/HA/config
+    environment:
+      - TZ=America/New_York
+    restart: always
+    network_mode: host
 
 
 
+
+ sudo docker-compose up -d; ### execute from the dir the above yaml file is in to start up the instance 
+
+### to restart use:
+  sudo docker-compose restart; ### to restart Home Assistant
+### to rebuild:
+  sudo docker-compose pull;
+  sudo docker-compose up -d --build homeassistant
+
+
+### to get to homeassistant your IP port 8123 (find your IP = ifconfig or ip addr)
+ http://<your IP addr>:8123
+ 
 
 
 
