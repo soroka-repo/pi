@@ -1,0 +1,79 @@
+
+ Ubuntu 20.04 64bit installation on a Raspberry PI 4 w/4G
+
+
+# ___ write the ubuntu-20.04-preinstalled-server-amd64+raspi.img to the SD card
+
+# ___ boot the SD username/password is ubuntu/ubuntu update to a strong password
+
+# ___ verify that you got a dhcp assigned IP addr
+ ip addr;
+
+# ___ update, upgrade and install
+ sudo su;
+ apt update;
+ apt upgrade; ### upgrade may fail with a lock due to auto upgrade running just geep trying "apt update" until no further packages are 
+              ### installed then run "apt upgrade" again
+
+ apt install net-tools xubuntu-desktop; ### install xubuntu, I picked gddm perhaps we want the other option since thia is the gui UB
+ reboot;
+
+# ___ change the userid from ubuntu to your id, example will show userid "joeuser", this is for security the hackers will try "ubuntu"
+ sudo su;
+ cd /etc;
+ for i in "passwd" "group" "shadow" "gshadow"; do sed 's/ubuntu/joeuser/g' -i $i; done;
+ mv /home/ubuntu /home/joeuser;
+ reboot; ### just to make sure you did it correctly and we can still log on
+
+# ___ set the IP address to static so it will always be the same
+ sudo vi /etc/netplan/50-cloud-init.yaml; ### change it from: to: observing correct yaml column formatting
+###from:
+/etc/netplan$ cat 50-cloud-init.yaml 
+network:
+    ethernets:
+        eth0:
+            dhcp4: true
+            optional: true
+    version: 2
+
+###to:
+network:
+    ethernets:
+        eth0:
+            dhcp4: true
+            optional: true
+    version: 2
+
+
+# ___ change the hostname from: ubuntu to: something meaningful to you, this is for security the hackers will look for hostname "ubuntu"
+
+
+
+# ___ install docker
+ sudo su;
+ apt install snap;
+ snap install docker;
+
+# ___ test docker install
+ exit; ### try the following commands from your userid not root
+ systemctl status snap.docker.dockerd.service; ### check that docker is running
+ docker --version; 
+ docker-compose version;
+ sudo docker run hello-world; ### get the docker hello-world image from docker hub and startup a container running it
+ sudo docker images; ### list the docker image
+ sudo docker ps -a; ### list the docker container (instance) of the docker image
+ sudo docker stop <CONTAINER ID>; ### stop the runnning container with the ID from the "docker ps -a" command
+ sudo docker rm <CONTAINER ID>; ### delete the container with the ID from the "docker ps -a" command
+ sudo docker rmi hello-world; ### delete the hellow-world image (REPOSITARY) 
+ 
+
+# ___ run Home Assistant, this is just the first attempt we need to build a app stack with docker-composre, lets just take a look...
+ sudo docker run homeassistant/raspberrypi4-homeassistant;
+
+
+
+
+
+
+
+
