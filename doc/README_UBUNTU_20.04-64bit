@@ -175,4 +175,6 @@ services:
 
  # the mem usage has dropped with lightdm to 1G while gdm3 was using about 3.5G so maybe better 
 
-
+# ___ install google chromium, chromium uses about 10M per tab compared firefox 100M / tab of mem usage 
+ sudo apt update;
+ sudo apt install chromium-browser;
