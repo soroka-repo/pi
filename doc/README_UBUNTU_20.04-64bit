@@ -58,7 +58,9 @@ network:
 
 
 # ___ change the hostname from: ubuntu to: something meaningful to you, this is for security the hackers will look for hostname "ubuntu"
- dudo hostname <new hostname>;
+
+
+
 
 # ___ install docker
  sudo su;
@@ -170,4 +172,7 @@ services:
  #to change to lightdm and see it that hangs
  sudo dpkg-reconfigure lightdm;
  reboot;
+
+ # the mem usage has dropped with lightdm to 1G while gdm3 was using about 3.5G so maybe better 
+
 
