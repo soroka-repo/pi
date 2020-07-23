@@ -1,13 +1,47 @@
 
  Peter Soroka
 
- Ubuntu 20.04 64bit installation on a Raspberry PI 4 w/4G, 64G SD card and 1TB USB drive, with docker running HomeAssistant and Plex
+ Ubuntu 20.04 64bit installation on a Raspberry PI 4 B  w/4G, 64G SD card and 1TB USB drive, 
+   docker running: - Docker allows you to use Containoners- prepackaged applications the building blocks of the Cloud
+      HomeAssistant - Smart Home Automation
+      Plex - Media server / steamer
+   Ubuntu Studio for high end audio and image processing 
 
+
+
+ Current Hardware:
+ _X_ Raspbeery PI 4, Model B, 4GB SDRAM, added heatsinks and aluminum case, USB keyboard and mouse, HDMI cable and monitor,
+      The aluminum case did not work with the wifi, with a aluminum case you will need an external wifi antenna
+      which I may add but waiting to get the HIFIBerry in, which will sit on top of the PI so may need a new
+      case...
+ _X_ Power supply: current Apple USBC power supply 5.0 @ 2.4A but PI recommends a 3.0A so may need an upgrade
+                   waiting for the HIFIberry to come in since that may also drive a bigger supply
+ _X_ 64G microSD card current boot device
+ _X_ 1TB SATA III disk drive in a SATA to USB 3.0 case media storage (future part of the RAID storage) 
+
+ Upgrades: X=in use O=ordered, R=received, L=Looking
+ _O_ HIFIBerry Audio upgrade: PDAC+ ADC Pro $64, AAMP60 $49
+ _L_ 500G SATA III SSD drive, in a SATA III to USB 3.0 case to replace the 64G microSD card as the boot device  
+ _R_ Cooling fan, but waiting for the hifi berry to arrive to figure out placement
+ _L_ USB switch with extra power to support future RAID setup
+
+
+
+
+### Some IDs that you will need to get
 
 # ___ get an id on hub.docker.com we will use the docker hub to push any changes we make to the images for backup
 #     or use to update other pi(s) it's free
 
 # ___ get an id on github.com it will be used to store yaml files so you can setup the docker containers on other pi(s)
+
+
+
+### Create the PI/UB computer
+
+
+
+# load the Ubuntu 20.04 image to the micro SD card
 
 # ___ write the ubuntu-20.04-preinstalled-server-amd64+raspi.img to the SD card
 
@@ -24,8 +58,8 @@
  apt upgrade; ### upgrade may fail with a lock due to auto upgrade running just keep trying "apt update" until no further packages are 
               ### installed then run "apt upgrade" again
 
- apt install net-tools xubuntu-desktop; ### install xubuntu, I picked gdm3 (mistake) You should pick lightdm it uses less mem
- sudo apt-get install python3 python3-dev python3-venv python3-pip libffi-dev libssl-dev autoconf build-essential; ### install pre-reqa for home assistant
+ apt install net-tools xubuntu-desktop -y; ### install xubuntu, I picked gdm3 (mistake) You should pick lightdm it uses less mem
+ sudo apt-get install python3 python3-dev python3-venv python3-pip libffi-dev libssl-dev autoconf build-essential -y; ### install pre-reqa for home assistant
  reboot;
 
 # ___ change the userid from ubuntu to your id, example will show userid "joeuser", this is for security the hackers will try "ubuntu"
@@ -111,10 +145,15 @@ network: {config: disabled}
  hostnamectl set-hostname <new_host_name>;
 
 
+# you should now have a working PI computer ready to compete with any laptop,desktop,phone or tablet
+
+
+### Install and setup docker
+
 
 # ___ install docker
  sudo su;
- apt install snap;
+ apt install snap -y;
  snap install docker;
 
 # ___ test docker install
@@ -175,7 +214,7 @@ services:
 
 
 # ___ try a differeint level of home assistant moving from stable to latest and add portainer to view your docker images/instances with a GUI
- cd ~/HA/docker-build;
+ cd ~/HA;
  sudo docker-compose stop; ### stop home assistant instance
 
    ### if you want a do-over do the next step rm for remove your instance and configuration file
@@ -222,12 +261,184 @@ services:
 
 # ___ portlander is a gui to view your docker status use a webbrowser to get to port 9000 and setup a userid/password
 #
+ 192.168.1.50:9000 ### to use portlander
+
+
+# ___ add node-red graphical scriping language to HomeAssistant
 #
+ mkdir -p ~/nodered;
+
+# add node-red to the docker-compose.yml 
+ vi docker-compose.yml; ### adding node-red scripting language
+
+ cat docker-compose.yml 
+version: '3'
+services:
+  homeassistant:
+    container_name: home-assistant
+    image: homeassistant/raspberrypi4-homeassistant:stable
+    volumes:
+      - /home/soroka/HA:/config
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - TZ=America/New_York
+    restart: always
+    network_mode: host
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:8123"]
+      interval: 30s
+      timeout: 10s
+      retries: 6
+
+  portainer:
+    container_name: portainer
+    image: portainer/portainer
+    ports:
+      - 9000:9000
+    volumes:
+      - /home/soroka/portainer:/data:rw
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: "always" 
+
+  node-red:
+    container_name: node-red
+    image: nodered/node-red-docker:rpi-v8
+    ports:
+      - 1880:1880
+    volumes:
+      - /home/soroka/node-red:/data
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    restart: "no" # because the exit code(s) are wrong
+    depends_on:
+      homeassistant:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:1880"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
 
 
+### rebuild
+ cd ~/HA;
+ sudo docker-compose stop; ### stop home assistant instance
+### rebuild and start up the image
+ sudo docker-compose pull;
+ sudo docker-compose up -d;
+
+# install the node-red admin tool
+ sudo apt install npm -y;
+ sudo npm install -g node-red-admin;
+
+# setup node-red password
+ cd /home/soroka/nodered;
+ node-red-admin hash-pw; ### enter a new password for node-red and copy the returned hash
+
+###EXAMPLE:
+  node-red-admin hash-pw
+Password: 
+$2a$0zI2SzwCq2lmU7WJjNcCnD.eQkrM5PhX40LJXFfo2DOqZo..qxxdiS
+
+ vi settings.js; ### search for 'adminAuth" section, uncomment it and put in the hash
+
+### was:
+   // Securing Node-RED
+    // -----------------
+    // To password protect the Node-RED editor and admin API, the following
+    // property can be used. See http://nodered.org/docs/security.html for details.
+    //adminAuth: {
+    //    type: "credentials",
+    //    users: [{
+    //        username: "admin",
+    //        password: "$2a$08$zZWtXTja0fB1pzD4sHCMyOCMYz2Z6dNbM6tl8sJogENOMcxWV9DN.",
+    //        permissions: "*"
+    //    }]
+    //},
+
+### now after the edit:
+    // Securing Node-RED
+    // -----------------
+    // To password protect the Node-RED editor and admin API, the following
+    // property can be used. See http://nodered.org/docs/security.html for details.
+    adminAuth: {
+        type: "credentials",
+        users: [{
+            username: "admin",
+            password: "$2a$0zI2SzwCq2lmU7WJjNcCnD.eQkrM5PhX40LJXFfo2DOqZo..qxxdiS",
+            permissions: "*"
+        }]
+    },
+ 
+
+# save the file and restart node-red and login to node-red on port 1880
+ cd ~/HA;
+ sudo docker-compose restart nodered;
+ http://192.168.1.50:1880 ### enter username= admin and the password you created above
+
+# create a file panel_iframe.yaml so node-red will be available on the left side of HomeAssistant
+
+ vi ~/HA/configuration.yaml ### and add the following to the bottom of the file
+
+panel_iframe:
+  nodered:
+    title: 'Node-Red'
+    url: 'http://127.0.0.1:1880'
+    icon: mdi:nodejs
 
 
+
+# restart HomeAssistant to pick up the node-red icon 
+ sudo docker-compose restart homeassistant;
+ 
+
+
+
+ https://smarthome.university/home-assistant/node-red/installing-node-red-with-home-assistant/
+ 
+
+Connecting Node-RED to Home Assistant
+ 
+Connecting Node-RED to HA is as easy as loading the proper modules into Node-RED.
+
+On the Node-RED webpage, click the hamburger button in the upper-right corner and select "Manage palette".
+
+Click the "Install" tab
+
+Where it says "search modules", enter "home-assistant"
+
+You want the one that says "node-red-contrib-home-assistant-websocket", currently at version 0.1.3
+
+Click the install button
+
+Click the install button on the warning that pops up
+
+ 
+When you see a green box pop up, listing the new nodes that are added to the palette, it's done installing.
+
+ 
+The first time you try to use the Home Assistant nodes, there will be errors. This is normal. Errors will be thrown and HA entity names will not show up automatically until the nodes are properly configured (pointing at your HA install with http://YOUR.PI.IP.ADDRESS:8123 and a Long-Lived Access Token) AND you hit "Deploy" at the upper-right.
+
+ 
+You get a Long-Lived Access Token from Home Assistant by clicking on the round Profile button in the upper left of the HA interface. If the username you created in HA is "Bob", you should see a circle around a "B". Click that.
+
+ 
+At the bottom of the profile page, you'll see an option to create a Long-Lived Access Token. Give it a meaningful name, like "Node-RED", and copy the text of the token. Paste this text into the "Edit server node" section of Node-RED, where it says "Access Token".
+
+ 
+Use of Node-RED for HA automation is for another discussion, but at least now you can get started. :-)
+
+ 
+ 
+
+
+### ___ Add organizer 
+ mkdir -p /opt/organizr;
+
+
+### ___ Add dockermon
+ mkdir -p /opt/dockermon;
 
 
 
@@ -288,8 +499,10 @@ services:
  systemctl restart NetworkManager
 
 # wlan0 network is back up, Maybe it was the buggy light locker screensaver putting the wifi in power save mode
-# wait and see...
-
+# wait and see... still gone while using xscreensaver... lets see if it goes away at screen saver time??? nope
+# OUCH: is it my nice aluminum case the PI is in messing up the wifi signal??? case is open now see what happens...
+#      looking better oh well the case has to go when the hifiberry hat arrives, maybe need to add a U.FL connector
+#      and an external wifi antenna....
 
 
 
@@ -311,5 +524,8 @@ services:
 
 ### ADD: get HomeAssistant to connect to the Honeywell/Ademco/Resdeio Vista 21IP alarm panel
 
+### ADD: cooling fan and overclock
 
+### ADD: external uFL wifi connector
 
+### ADD: is the bluetooth working????
