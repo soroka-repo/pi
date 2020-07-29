@@ -113,7 +113,7 @@ network:
 
 ###to: this is what I have, change the IPs addrs as needed, replace the XXXX.. in wlan0
 #      change the mac address to your mac in the match this is here to make sure eth0 name got changed on boot
-#      change the routes and nameserver ip from 192.168.1[0].1 to your correct gateway
+#      change the routes and nameserver ip from 192.168.2[3].1 to your correct gateway
 
 network:
   version: 2
@@ -122,9 +122,9 @@ network:
     eth0:
       match:
         macaddress: dc:a6:32:XX:XX:XX
-      addresses: [192.168.1.50/24]
+      addresses: [192.168.2.100/24]
       nameservers:
-        addresses: [192.168.1.1,8.8.8.8]
+        addresses: [192.168.2.1,8.8.8.8]
       optional: true
       routes:
         - to: 0.0.0.0/0
@@ -133,16 +133,16 @@ network:
   wifis:
     wlan0:     
       dhcp4: no
-      addresses: [192.168.0.50/24]
+      addresses: [192.168.3.100/24]
       nameservers:
-        addresses: [192.168.0.1,8.8.8.8]
+        addresses: [192.168.3.1,8.8.8.8]
       optional: true
       access-points:
         "XXXX":
            password: "XXXXXXXXX"
       routes:
         - to: 0.0.0.0/0
-          via: 192.168.0.1
+          via: 192.168.3.1
           metric: 100
 
 # create the file /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg
@@ -628,8 +628,6 @@ Use of Node-RED for HA automation is for another discussion, but at least now yo
 ### ADD: get the PI-4 to boot with a USB 3.0 SATA III SSD without the SD card
 
 ### ADD: swap space on the SSD for the PI
-
-### ADD: get HomeAssistant to connect to the Honeywell/Ademco/Resdeio Vista 21IP alarm panel
 
 ### ADD: cooling fan and overclock
 
