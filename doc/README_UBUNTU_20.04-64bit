@@ -2,10 +2,14 @@
  Peter Soroka
 
  Ubuntu 20.04 64bit installation on a Raspberry PI 4 B  w/4G, 64G SD card and 1TB USB drive, 
-   docker running: - Docker allows you to use Containoners- prepackaged applications the building blocks of the Cloud
-      HomeAssistant - Smart Home Automation
-      Plex - Media server / steamer
-   Ubuntu Studio for high end audio and image processing 
+
+
+
+ Current Running Software: X= Complete, P= Partial install, U= not installed yet
+ _X_ docker running: - Docker allows you to use Containoners- prepackaged applications the building blocks of the Cloud
+   _P_  HomeAssistant - Smart Home Automation - installed, running internal website - needs SSL and DNS to run external website
+   _U_  Plex - Media server / steamer - not installed yet will try to use docer for the install
+ _U_ Ubuntu Studio for high end audio and image processing 
 
 
 
@@ -16,19 +20,25 @@
       case...
  _X_ Power supply: current Apple USBC power supply 5.0 @ 2.4A but PI recommends a 3.0A so may need an upgrade
                    waiting for the HIFIberry to come in since that may also drive a bigger supply
+                   Now using an old IBM laptop supply 20V @3A plugged into the HIFIberry AMP and it powers it all 
  _X_ 64G microSD card current boot device
  _X_ 1TB SATA III disk drive in a SATA to USB 3.0 case media storage (future part of the RAID storage) 
+ _X_ HIFIBerry Audio upgrade: PDAC+ ADC Pro $64, AAMP60 $49
 
  Upgrades: X=in use O=ordered, R=received, L=Looking
- _O_ HIFIBerry Audio upgrade: PDAC+ ADC Pro $64, AAMP60 $49
- _L_ 500G SATA III SSD drive, in a SATA III to USB 3.0 case to replace the 64G microSD card as the boot device  
- _R_ Cooling fan, but waiting for the hifi berry to arrive to figure out placement
+ _R_ 500G SATA III SSD drive, in a SATA III to USB 3.0 case to replace the 64G microSD card as the boot device  
+ _R_ Cooling fan, but waiting for the hifiberry to arrive to figure out placement
  _L_ USB switch with extra power to support future RAID setup
 
 
 
 
+######################################################################3
+#
 ### Some IDs that you will need to get
+#
+######################################################################3
+
 
 # ___ get an id on hub.docker.com we will use the docker hub to push any changes we make to the images for backup
 #     or use to update other pi(s) it's free
@@ -37,8 +47,11 @@
 
 
 
+######################################################################3
+#
 ### Create the PI/UB computer
-
+#
+######################################################################3
 
 
 # load the Ubuntu 20.04 image to the micro SD card
@@ -60,6 +73,7 @@
 
  apt install net-tools xubuntu-desktop -y; ### install xubuntu, I picked gdm3 (mistake) You should pick lightdm it uses less mem
  sudo apt-get install python3 python3-dev python3-venv python3-pip libffi-dev libssl-dev autoconf build-essential -y; ### install pre-reqa for home assistant
+ apt install ubuntu-restricted-extras; ### install media codecs
  reboot;
 
 # ___ change the userid from ubuntu to your id, example will show userid "joeuser", this is for security the hackers will try "ubuntu"
@@ -80,13 +94,15 @@
 
 
 # use netplan (see: man netplan) to configure the nework it will support all the possible network configurations that you can think of
-# allow NetworkManager to manage netplan it works well with the extra networks docker will add
+# allow NetworkManager to manage netplan it works well with the extra networks docker will add. Move /etc/netplan/50-cloud-int.yaml to
+# /etc/netplan/01-netcfg.yaml or remove the 50-cloud-int.yaml we only want 01-netcfg.yaml in the /etc/netplan dir.
 
 
- sudo vi /etc/netplan/50-cloud-init.yaml; ### change it from: to: observing correct yaml column formatting
+ sudo mv /etc/netplan/50-cloud-init.yaml /etc/netplan/01-netcfg.yaml
+ sudo vi /etc/netplan/01-netcfg.yaml; ### change it from: to: observing correct yaml column formatting
 
 ###from: this is the default
-/etc/netplan$ cat 50-cloud-init.yaml 
+/etc/netplan$ cat 01-netcfg.yaml 
 
 network:
     ethernets:
@@ -95,7 +111,7 @@ network:
             optional: true
     version: 2
 
-###to: this is what I have change the IPs addrs as needed, replace the XXXX.. in wlan0
+###to: this is what I have, change the IPs addrs as needed, replace the XXXX.. in wlan0
 #      change the mac address to your mac in the match this is here to make sure eth0 name got changed on boot
 #      change the routes and nameserver ip from 192.168.1[0].1 to your correct gateway
 
@@ -148,7 +164,94 @@ network: {config: disabled}
 # you should now have a working PI computer ready to compete with any laptop,desktop,phone or tablet
 
 
+
+
+
+
+######################################################################3
+#
+### HIFIBerry audio upgrade ADC +DAC Pro and AMP60
+#
+######################################################################3
+
+
+
+# Turn off the PIs Audio in file /boot/firmware/syscfg.txt comment out the line dtparam=audio=on
+
+###EXAMPLE:
+cat syscfg.txt
+# This file is intended to be modified by the pibootctl utility. User
+# configuration changes should be placed in "usercfg.txt". Please refer to the
+# README file for a description of the various configuration files on the boot
+# partition.
+
+enable_uart=1
+###dtparam=audio=on
+dtparam=i2c_arm=on
+dtparam=spi=on
+cmdline=cmdline.txt
+
+
+# Add the HIFIBerry drivers to the /boot/firmware/usercfg.txt
+
+###EXAMPLE:
+cat usercfg.txt 
+# Place "config.txt" changes (dtparam, dtoverlay, disable_overscan, etc.) in
+# this file. Please refer to the README file for a description of the various
+# configuration files on the boot partition.
+dtoverlay=hifiberry-dacplusadcpro
+
+
+# Reboot the Test 
+
+
+ lsmod|grep hifi; ### check for the loaded hifiberry modules 
+
+snd_soc_hifiberry_dacplusadcpro    20480  4
+snd_soc_core          258048  4 snd_soc_pcm512x,snd_soc_pcm186x,snd_soc_bcm2835_i2s,snd_soc_hifiberry_dacplusadcpro
+snd_pcm               143360  9 snd_soc_pcm512x,snd_soc_pcm186x,snd_soc_bcm2835_i2s,snd_soc_hifiberry_dacplusadcpro,snd_pcm_oss,snd_soc_core,snd_pcm_dmaengine
+clk_hifiberry_dacpro    16384  1
+
+
+
+ aplay -l; ### check aplay command line player
+
+###EXAMPLE:
+ aplay -l
+**** List of PLAYBACK Hardware Devices ****
+card 0: sndrpihifiberry [snd_rpi_hifiberry_dacplusadcpro], device 0: HiFiBerry DAC+ADC Pro HiFi multicodec-0 [HiFiBerry DAC+ADC Pro HiFi multicodec-0]
+  Subdevices: 0/1
+  Subdevice #0: subdevice #0
+
+# adjust
+ amixer sget Digital ### get
+ amixer sset Digital 80% ### set
+
+# Create /etc/asound.conf with the following content:
+
+###EXAMPLE:
+ cat /etc/asound.conf;  
+
+pcm.!default {
+  type hw card 0
+}
+ctl.!default {
+  type hw card 0
+}
+
+
+
+
+
+# try
+ alsamixer
+
+
+######################################################################3
+#
 ### Install and setup docker
+#
+######################################################################3
 
 
 # ___ install docker
@@ -491,6 +594,10 @@ Use of Node-RED for HA automation is for another discussion, but at least now yo
     Settings
      screensaver # set the mode "Blank or Only One or Ransom",  set the time "Blank After x minutes"
 
+### remove the light-locker screen saver
+ apt remove light-locker light-locker-settings
+
+
 
 
 ### DEBUGGING: wifi network down
@@ -512,9 +619,9 @@ Use of Node-RED for HA automation is for another discussion, but at least now yo
 
 
 
-### ADD: wireguard is the VPN for UB20 apt install wireguard, and there are docker images
+### ADD: wireguard = is the VPN for UB20 apt install wireguard, and there are docker images
 
-### ADD: the hifiberry PRO ADC/DAC and AMP when it arrives
+### Complete: the hifiberry PRO ADC/DAC and AMP when it arrives
 
 ### ADD: Plex with docker, add a better mount for the USB drive
 
@@ -528,4 +635,6 @@ Use of Node-RED for HA automation is for another discussion, but at least now yo
 
 ### ADD: external uFL wifi connector
 
-### ADD: is the bluetooth working????
+### ADD: is the bluetooth working???? may need an antenna to extend it's range it works better with case lid off
+
+
