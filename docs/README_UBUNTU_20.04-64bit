@@ -6,7 +6,7 @@
 ######################################################################
 
 
-###VERSION: 20200802:2205 Peter Soroka
+###VERSION: 20200803:1504 Peter Soroka
 
 ###NOTE: Preface
      This is a working document of the progress on my PI project not all items
@@ -17,7 +17,7 @@
     characters to the end of the line.
 
   This file located at:
-    WebSite: https://soroka-repo.github.io/pi/
+###LINK: This WebSite: https://soroka-repo.github.io/pi/
     Text: https://github.com/soroka-repo/pi/docs/README_UBUNTU_20.04-64bit
     HTML: https://github.com/soroka-repo/pi/docs/index.html
 
@@ -25,6 +25,7 @@
         the page if the website is down (github 1 hour publish time) and you need access you will have to download the file for
         the webpage from github "https://github.com/soroka-repo/pi/docs/index.html" 
 
+  NOTE: just trying to add pictures to this webpage... still not working yet
 
 ######################################################################
 #
@@ -49,6 +50,7 @@
  _R_ Cooling fan, but waiting for the hifiberry to arrive to figure out placement
  _L_ USB switch with extra power to support future RAID setup
 
+###MEDIA: rasppi.jpg
 
 ###STEP: Current Running Software: X=Install Complete, P=Partial install, U=not installed yet
  _X_ docker running: - Docker allows you to use Containers- prepackaged applications the building blocks of the Cloud
@@ -82,9 +84,8 @@
 #
 ######################################################################
 
-# load the Ubuntu 20.04 64bit image to the micro SD card
-
-###STEP: ___ write the ubuntu-20.04-preinstalled-server-amd64+raspi.img to the SD card
+###STEP: ___ load the Ubuntu 20.04 64bit image to the micro SD card
+#            write the ubuntu-20.04-preinstalled-server-arm64+raspi.img.xz to the SD card
 #            grab the image from the Raspberry PI site and use your search engine to find the correct way to flash the image to the SD card
 
 ###STEP: ___ boot the SD username/password is ubuntu/ubuntu update to a strong password (like 16 characters or more)
@@ -140,7 +141,7 @@
 ###STEP: ___ set the IP address to static
 #     so it will always be the same, I have 2 networks one for wired and one for wireless
 #     the raspberry PI is connected to both networks and the default gateway (routes) are set to work if either
-#     network is down or both up, we will also be disabling UB's Cloud.cfg which seems to hang things up some/most of the time 
+#     network is down or both up 
 #
 #
 # list network interfaces of the PI just to see what you have
@@ -216,6 +217,13 @@ network:
           metric: 100
 ###EXAMPLE_END:
 
+ netplan apply; ### this will test and apply your new /etc/netplan/01-netcfg.yaml network config file
+#or*
+ netplan try; ### this will try it and then roll it back if you messed up. nice if you are working remote to the server(PI)
+
+
+###STEP: disable UB's cloud-init
+# disable UB's Cloud-init which seems to hang things up some/most of the time 
 
 # create the file /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg
 # with just the line network: {config: disabled}
@@ -225,10 +233,14 @@ network:
 network: {config: disabled}
 ###EXAMPLE_END:
 
- netplan apply; ### this will test and apply your new /etc/netplan/01-netcfg.yaml network config file
-#or*
- netplan try; ### this will try it and then roll it back if you messed up. nice if you are working remote to the server(PI)
-   
+# create the empty file /etc/cloud/cloud-init.disabled
+ sudo touch /etc/cloud/cloud-init.disabled;
+ sudo systemctl cloud-init stop;
+ sudo systemctl cloud-init disable;
+
+
+
+ 
 
 # reboot and test if your network works
  reboot;
@@ -325,7 +337,7 @@ ctl.!default {
  mplayer;
 
 
-### add the pulse equalizer
+###STEP: add the pulse equalizer
  sudo su;
  apt install pulseaudio-equalizer; ### install pulse eq
 ### the following 2 lines to the "/etc/pulse/default.pa" file without the # (comment) the following echo line will do it for you
@@ -335,8 +347,12 @@ ctl.!default {
  exit; ### logout of sudo su (root id) and back into your userid
  pulseaudio --kill && pulseaudio --start; ### reload pulseaudio
  qpaeq; ### start the equalizer
-### from the upper right hanf volume ICON click on the "Audio mixer..." click "Playback" and switch click the box next to what is playing
+### from the upper right hand volume ICON click on the "Audio mixer..." click "Playback" and switch click the box next to what is playing
 ### and change it to "FFT based equalizer on jack sink (PulseAudioAudio JACK Sink)" Just drag the qpaeq window wider to increse the bands in the eq
+ sudo ln -sf /usr/bin/qpaeq /usr/bin/eq; ### create a link so you can just type "eq" since I can't remember "qpaeq"
+ eq; ### to start the equalizer with the link
+ eq&; ### to start the eq in backround so you get your terminal back note: it will still post "saving state" to your terminal if you make changes
+
 
 
 ######################################################################

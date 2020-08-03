@@ -5,8 +5,10 @@
     a { text-decoration: none; }
 </style>
 </ol><a href="index.html#PROCEDUREUbuntu200464bitinstallationonaRaspberryPI4Bw4G64GSDcardand1TBUSBdrive"><font color="blue"><h3 align='left'>  Ubuntu 20.04 64bit installation on a Raspberry PI 4 B w/4G, 64G SD card and 1TB USB drive</h3></font></a><ol>
-<font color="black"><h3 align='center'>VERSION: 20200802:2205 Peter Soroka</font></h3>
+<font color="black"><h3 align='center'>VERSION: 20200803:1504 Peter Soroka</font></h3>
 <li><a href="index.html#NOTEPreface"><font color="black"> Preface</font></a></li>
+<a href="index.html#LINKThisWebSitehttpssorokarepogithubiopi"><font color="blue">&emsp; Link:  This WebSite: https://soroka-repo.github.io/pi/<br></font></a>
+
 </ol><a href="index.html#PROCEDURECurrentHardwareSoftwareconfiguration"><font color="blue"><h3 align='left'>  Current Hardware / Software configuration</h3></font></a><ol>
 <li><a href="index.html#STEPCurrentHardware"> Current Hardware:</a></li>
 <li><a href="index.html#STEPCurrentRunningSoftwareX=InstallCompleteP=PartialinstallU=notinstalledyet"> Current Running Software: X=Install Complete, P=Partial install, U=not installed yet</a></li>
@@ -14,7 +16,7 @@
 <li><a href="index.html#STEP___getanidonhubdockercomwewillusethedockerhubtopushanychangeswemaketotheimagesforbackup"> ___ get an id on hub.docker.com we will use the docker hub to push any changes we make to the images for backup</a></li>
 <li><a href="index.html#STEP___getanidongithubcomitwillbeusedtostoreyamlfilessoyoucansetupthedockercontainersonotherpis"> ___ get an id on github.com it will be used to store yaml files so you can setup the docker containers on other pi(s)</a></li>
 </ol><a href="index.html#PROCEDURECreatethePIUBcomputerUB200464bit"><font color="blue"><h3 align='left'>  Create the PI/UB computer UB 20.04 64bit</h3></font></a><ol>
-<li><a href="index.html#STEP___writetheubuntu2004preinstalledserveramd64raspiimgtotheSDcard"> ___ write the ubuntu-20.04-preinstalled-server-amd64+raspi.img to the SD card</a></li>
+<li><a href="index.html#STEP___loadtheUbuntu200464bitimagetothemicroSDcard"> ___ load the Ubuntu 20.04 64bit image to the micro SD card</a></li>
 <li><a href="index.html#STEP___boottheSDusernamepasswordisubuntuubuntuupdatetoastrongpasswordlike16charactersormore"> ___ boot the SD username/password is ubuntu/ubuntu update to a strong password (like 16 characters or more)</a></li>
 <li><a href="index.html#STEP___verifythatyougetadhcpassignedIPaddr"> ___ verify that you get a dhcp assigned IP addr</a></li>
 <li><a href="index.html#STEP___updateupgrade"> ___ update, upgrade</a></li>
@@ -23,27 +25,29 @@
 <li><a href="index.html#STEP___rebootandswitchthedesktoptoxubuntu"> ___ reboot and switch the desktop to xubuntu</a></li>
 <li><a href="index.html#STEP___changetheuseridfromubuntutoyourownid"> ___ change the userid from ubuntu to your own id</a></li>
 <li><a href="index.html#STEP___settheIPaddresstostatic"> ___ set the IP address to static</a></li>
-<a href="index.html#EXAMPLEFromcatetcnetplan01netcfgyamlUB'sdefault"><font color="black">&emsp; Example;  From: cat /etc/netplan/01-netcfg.yaml UB's default<br></font></a>
+<a href="index.html#EXAMPLEFromcatetcnetplan01netcfgyamlUB'sdefault"><font color="black">&emsp; Example:  From: cat /etc/netplan/01-netcfg.yaml UB's default<br></font></a>
 
-<a href="index.html#EXAMPLETOcatetcnetplan01netcfgyamlyourneconfig"><font color="black">&emsp; Example;  TO: cat /etc/netplan/01-netcfg.yaml your ne config<br></font></a>
+<a href="index.html#EXAMPLETOcatetcnetplan01netcfgyamlyourneconfig"><font color="black">&emsp; Example:  TO: cat /etc/netplan/01-netcfg.yaml your ne config<br></font></a>
 
-<a href="index.html#EXAMPLEcatetccloudcloudcfgd99disablenetworkconfigcfg"><font color="black">&emsp; Example;  cat /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg<br></font></a>
+<li><a href="index.html#STEPdisableUB'scloudinit"> disable UB's cloud-init</a></li>
+<a href="index.html#EXAMPLEcatetccloudcloudcfgd99disablenetworkconfigcfg"><font color="black">&emsp; Example:  cat /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg<br></font></a>
 
 <li><a href="index.html#STEP___changethehostname"> ___ change the hostname</a></li>
 </ol><a href="index.html#PROCEDUREHIFIBerryaudioupgradeADCDACProandAMP60"><font color="blue"><h3 align='left'>  HIFIBerry audio upgrade ADC +DAC Pro and AMP60</h3></font></a><ol>
 <li><a href="index.html#STEP___TurnoffthePI'sAudio"> ___ Turn off the PI's Audio</a></li>
-<a href="index.html#EXAMPLEcatboorfirmwaresyscfgtxt"><font color="black">&emsp; Example;  cat /boor/firmware/syscfg.txt<br></font></a>
+<a href="index.html#EXAMPLEcatboorfirmwaresyscfgtxt"><font color="black">&emsp; Example:  cat /boor/firmware/syscfg.txt<br></font></a>
 
 <li><a href="index.html#STEP___AddtheHIFIBerrydriverstothebootfirmwareusercfgtxt"> ___ Add the HIFIBerry drivers to the /boot/firmware/usercfg.txt</a></li>
-<a href="index.html#EXAMPLEcatbootfirmwareusercfgtxt"><font color="black">&emsp; Example;  cat /boot/firmware/usercfg.txt<br></font></a>
+<a href="index.html#EXAMPLEcatbootfirmwareusercfgtxt"><font color="black">&emsp; Example:  cat /boot/firmware/usercfg.txt<br></font></a>
 
 <li><a href="index.html#STEP___RebootthenTest"> ___ Reboot then Test</a></li>
-<a href="index.html#EXAMPLElsmod|grephifi;"><font color="black">&emsp; Example;  lsmod|grep hifi;<br></font></a>
+<a href="index.html#EXAMPLElsmod|grephifi;"><font color="black">&emsp; Example:  lsmod|grep hifi;<br></font></a>
 
-<a href="index.html#EXAMPLEaplayl"><font color="black">&emsp; Example;  aplay -l<br></font></a>
+<a href="index.html#EXAMPLEaplayl"><font color="black">&emsp; Example:  aplay -l<br></font></a>
 
-<a href="index.html#EXAMPLEcatetcasoundconf;"><font color="black">&emsp; Example;  cat /etc/asound.conf;<br></font></a>
+<a href="index.html#EXAMPLEcatetcasoundconf;"><font color="black">&emsp; Example:  cat /etc/asound.conf;<br></font></a>
 
+<li><a href="index.html#STEPaddthepulseequalizer"> add the pulse equalizer</a></li>
 </ol><a href="index.html#PROCEDUREInstallUbuntuStudioforAudiodebugmethod"><font color="blue"><h3 align='left'>  Install Ubuntu Studio for Audio (debug method)</h3></font></a><ol>
 <li><a href="index.html#STEP___InstallUBStudioforAudio"> ___ Install UBStudio for Audio</a></li>
 <li><a href="index.html#STEP___Rebootandtestwhatworks"> ___ Reboot and test what works</a></li>
@@ -53,22 +57,22 @@
 <li><a href="index.html#STEP___installdocker"> ___ install docker</a></li>
 <li><a href="index.html#STEP___testdockerinstall"> ___ test docker install</a></li>
 <li><a href="index.html#STEP___runHomeAssistant"> ___ run Home Assistant</a></li>
-<a href="index.html#EXAMPLEcatdockercomposeyml"><font color="black">&emsp; Example;  cat docker-compose.yml<br></font></a>
+<a href="index.html#EXAMPLEcatdockercomposeyml"><font color="black">&emsp; Example:  cat docker-compose.yml<br></font></a>
 
 <li><a href="index.html#STEP___tryadiffereintlevelofhomeassistantmovingfromstabletolatestandaddportainertoviewyourdockerimagesinstanceswithaGUI"> ___ try a differeint level of home assistant moving from stable to latest and add portainer to view your docker images/instances with a GUI</a></li>
-<a href="index.html#EXAMPLEcatdockercomposeyml"><font color="black">&emsp; Example;  cat docker-compose.yml<br></font></a>
+<a href="index.html#EXAMPLEcatdockercomposeyml"><font color="black">&emsp; Example:  cat docker-compose.yml<br></font></a>
 
 <li><a href="index.html#STEP___portlanderisaguitoviewyourdockerstatususeawebbrowsertogettoport9000andsetupauseridpassword"> ___ portlander is a gui to view your docker status use a webbrowser to get to port 9000 and setup a userid/password</a></li>
 <li><a href="index.html#STEP___addnoderedgraphicalscripinglanguagetoHomeAssistant"> ___ add node-red graphical scriping language to HomeAssistant</a></li>
-<a href="index.html#EXAMPLEcatdockercomposeyml"><font color="black">&emsp; Example;  cat docker-compose.yml<br></font></a>
+<a href="index.html#EXAMPLEcatdockercomposeyml"><font color="black">&emsp; Example:  cat docker-compose.yml<br></font></a>
 
-<a href="index.html#EXAMPLEnoderedadminhashpw"><font color="black">&emsp; Example;  node-red-admin hash-pw<br></font></a>
+<a href="index.html#EXAMPLEnoderedadminhashpw"><font color="black">&emsp; Example:  node-red-admin hash-pw<br></font></a>
 
-<a href="index.html#EXAMPLEwasthedefaultcat~noderedsettingsjs;"><font color="black">&emsp; Example;  was the default cat ~/nodered/settings.js;<br></font></a>
+<a href="index.html#EXAMPLEwasthedefaultcat~noderedsettingsjs;"><font color="black">&emsp; Example:  was the default cat ~/nodered/settings.js;<br></font></a>
 
-<a href="index.html#EXAMPLEafteryoureditcat~noderedsettingsjs;"><font color="black">&emsp; Example;  after your edit cat ~/nodered/settings.js;<br></font></a>
+<a href="index.html#EXAMPLEafteryoureditcat~noderedsettingsjs;"><font color="black">&emsp; Example:  after your edit cat ~/nodered/settings.js;<br></font></a>
 
-<a href="index.html#EXAMPLEcat~HAconfigurationyaml"><font color="black">&emsp; Example;  cat ~/HA/configuration.yaml<br></font></a>
+<a href="index.html#EXAMPLEcat~HAconfigurationyaml"><font color="black">&emsp; Example:  cat ~/HA/configuration.yaml<br></font></a>
 
 <li><a href="index.html#STEP___Addorganizer"> ___ Add organizer</a></li>
 <li><a href="index.html#STEP___Adddockermon"> ___ Add dockermon</a></li>
@@ -94,7 +98,7 @@
 ######################################################################
 
 
-</h4></pre><font size="2"><h1 align='center'>VERSION: 20200802:2205 Peter Soroka</h1></font><pre><h4>
+</h4></pre><font size="2"><h1 align='center'>VERSION: 20200803:1504 Peter Soroka</h1></font><pre><h4>
 
 </h4></pre><h3 align='left' id="NOTEPreface">NOTE: Preface</h3><pre><h4>
      This is a working document of the progress on my PI project not all items
@@ -105,7 +109,7 @@
     characters to the end of the line.
 
   This file located at:
-    WebSite: https://soroka-repo.github.io/pi/
+</h5></pre><h3 align='left' id="LINKThisWebSitehttpssorokarepogithubiopi">LINK: This WebSite: https://soroka-repo.github.io/pi/</h5><pre><h4>
     Text: https://github.com/soroka-repo/pi/docs/README_UBUNTU_20.04-64bit
     HTML: https://github.com/soroka-repo/pi/docs/index.html
 
@@ -113,6 +117,7 @@
         the page if the website is down (github 1 hour publish time) and you need access you will have to download the file for
         the webpage from github "https://github.com/soroka-repo/pi/docs/index.html" 
 
+</h4></pre><h3 align='left' id="NOTEjusttryingtoaddpicturestothiswebpagestillnotworkingyet">NOTE: just trying to add pictures to this webpage... still not working yet</h3><pre><h4>
 
 ######################################################################
 #
@@ -137,6 +142,8 @@
  _R_ Cooling fan, but waiting for the hifiberry to arrive to figure out placement
  _L_ USB switch with extra power to support future RAID setup
 
+<h4 align='center' id="MEDIArasppijpg">MEDIA: rasppi.jpg
+</h4><pre><p style="border:4px; border-style:solid; border-color:black; padding: 2em;"><span style="white-space: nowrap;">
 
 </h4></pre><h3 align='left' id="STEPCurrentRunningSoftwareX=InstallCompleteP=PartialinstallU=notinstalledyet">STEP: Current Running Software: X=Install Complete, P=Partial install, U=not installed yet</h3><pre><h4>
  _X_ docker running: - Docker allows you to use Containers- prepackaged applications the building blocks of the Cloud
@@ -170,9 +177,8 @@
 #
 ######################################################################
 
-# load the Ubuntu 20.04 64bit image to the micro SD card
-
-</h4></pre><h3 align='left' id="STEP___writetheubuntu2004preinstalledserveramd64raspiimgtotheSDcard">STEP: ___ write the ubuntu-20.04-preinstalled-server-amd64+raspi.img to the SD card</h3><pre><h4>
+</h4></pre><h3 align='left' id="STEP___loadtheUbuntu200464bitimagetothemicroSDcard">STEP: ___ load the Ubuntu 20.04 64bit image to the micro SD card</h3><pre><h4>
+#            write the ubuntu-20.04-preinstalled-server-arm64+raspi.img.xz to the SD card
 #            grab the image from the Raspberry PI site and use your search engine to find the correct way to flash the image to the SD card
 
 </h4></pre><h3 align='left' id="STEP___boottheSDusernamepasswordisubuntuubuntuupdatetoastrongpasswordlike16charactersormore">STEP: ___ boot the SD username/password is ubuntu/ubuntu update to a strong password (like 16 characters or more)</h3><pre><h4>
@@ -228,7 +234,7 @@
 </h4></pre><h3 align='left' id="STEP___settheIPaddresstostatic">STEP: ___ set the IP address to static</h3><pre><h4>
 #     so it will always be the same, I have 2 networks one for wired and one for wireless
 #     the raspberry PI is connected to both networks and the default gateway (routes) are set to work if either
-#     network is down or both up, we will also be disabling UB's Cloud.cfg which seems to hang things up some/most of the time 
+#     network is down or both up 
 #
 #
 # list network interfaces of the PI just to see what you have
@@ -306,6 +312,13 @@ network:</span>
           metric: 100
 </p></pre>
 
+ netplan apply; ### this will test and apply your new /etc/netplan/01-netcfg.yaml network config file
+#or*
+ netplan try; ### this will try it and then roll it back if you messed up. nice if you are working remote to the server(PI)
+
+
+</h4></pre><h3 align='left' id="STEPdisableUB'scloudinit">STEP: disable UB's cloud-init</h3><pre><h4>
+# disable UB's Cloud-init which seems to hang things up some/most of the time 
 
 # create the file /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg
 # with just the line network: {config: disabled}
@@ -316,10 +329,14 @@ network:</span>
 network: {config: disabled}</span>
 </p></pre>
 
- netplan apply; ### this will test and apply your new /etc/netplan/01-netcfg.yaml network config file
-#or*
- netplan try; ### this will try it and then roll it back if you messed up. nice if you are working remote to the server(PI)
-   
+# create the empty file /etc/cloud/cloud-init.disabled
+ sudo touch /etc/cloud/cloud-init.disabled;
+ sudo systemctl cloud-init stop;
+ sudo systemctl cloud-init disable;
+
+
+
+ 
 
 # reboot and test if your network works
  reboot;
@@ -421,7 +438,7 @@ ctl.!default {
  mplayer;
 
 
-### add the pulse equalizer
+</h4></pre><h3 align='left' id="STEPaddthepulseequalizer">STEP: add the pulse equalizer</h3><pre><h4>
  sudo su;
  apt install pulseaudio-equalizer; ### install pulse eq
 ### the following 2 lines to the "/etc/pulse/default.pa" file without the # (comment) the following echo line will do it for you
@@ -431,8 +448,12 @@ echo -e "### add for pulse equalizer &#92nload-module module-equalizer-sink &#92
  exit; ### logout of sudo su (root id) and back into your userid
  pulseaudio --kill && pulseaudio --start; ### reload pulseaudio
  qpaeq; ### start the equalizer
-### from the upper right hanf volume ICON click on the "Audio mixer..." click "Playback" and switch click the box next to what is playing
+### from the upper right hand volume ICON click on the "Audio mixer..." click "Playback" and switch click the box next to what is playing
 ### and change it to "FFT based equalizer on jack sink (PulseAudioAudio JACK Sink)" Just drag the qpaeq window wider to increse the bands in the eq
+ sudo ln -sf /usr/bin/qpaeq /usr/bin/eq; ### create a link so you can just type "eq" since I can't remember "qpaeq"
+ eq; ### to start the equalizer with the link
+ eq&; ### to start the eq in backround so you get your terminal back note: it will still post "saving state" to your terminal if you make changes
+
 
 
 ######################################################################
