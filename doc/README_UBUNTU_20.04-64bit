@@ -1,4 +1,46 @@
 
+
+
+
+
+
+
+
+    OPPs: The location of this document is moving it was a typo. was in /doc should be in /docs. the /docs is needed for github
+    to publish as a web page the current and the web pages are at:
+    
+    WebSite: https://soroka-repo.github.io/pi/
+    Text: https://github.com/soroka-repo/pi/docs/README_UBUNTU_20.04-64bit
+    HTML: https://github.com/soroka-repo/pi/docs/index.html
+
+   NOTE: the website "https://soroka-repo.github.io/pi/" if I update the website it seems github can take up to an hour to republish
+        the page, if the website is down (github 1 hour publish time) and you need access you will have to download the file for
+        the webpage from github "https://github.com/soroka-repo/pi/docs/index.html"
+
+ 
+   The following is the obsolete document please go to the latest location above 
+
+   
+   
+   
+   
+   
+   
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ######################################################################
 #
 ###PROCEDURE: Ubuntu 20.04 64bit installation on a Raspberry PI 4 B  w/4G, 64G SD card and 1TB USB drive 
