@@ -6,7 +6,7 @@
 ######################################################################
 
 
-###VERSION: 20200826:2147 Peter Soroka
+###VERSION: 20200826:2330 Peter Soroka
 
 ###NOTE: Preface
      This is a working document of the progress on my PI project not all items
@@ -50,7 +50,7 @@
  _R_ Cooling fan, but waiting for the hifiberry to arrive to figure out placement
  _L_ USB switch with extra power to support future RAID setup
 
-###MEDIA: raspberrypi.jpg
+###MEDIA: "raspberrypi.jpg" "600" "600"
 
 ###STEP: Current Running Software: X=Install Complete, P=Partial install, U=not installed yet
  _X_ docker running: - Docker allows you to use Containers- prepackaged applications the building blocks of the Cloud
@@ -245,7 +245,7 @@ network:
 
 ###LINK: "HiFiBerry:" "https://www.hifiberry.com/"
 
-###MEDIA: PI-HiFiBerry.jpg
+###MEDIA: "PI-HiFiBerry.jpg" "600" "900"
 
 ###STEP: ___ Turn off the PI's Audio
 #             in file /boot/firmware/syscfg.txt comment out the line dtparam=audio=on
@@ -389,6 +389,8 @@ Recommended packages:
 ###PROCEDURE: Install Ubuntu Studio for Audio (eaiser method)
 ##
 #######################################################################
+
+###MEDIA: "UBStudio.png" "1200" "600"
 #
 ###STEP: ___ Install UBStudio for Audio 
 #
