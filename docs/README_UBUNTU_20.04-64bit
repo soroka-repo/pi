@@ -6,7 +6,7 @@
 ######################################################################
 
 
-###VERSION: 20200803:1504 Peter Soroka
+###VERSION: 20200826:2147 Peter Soroka
 
 ###NOTE: Preface
      This is a working document of the progress on my PI project not all items
@@ -17,15 +17,15 @@
     characters to the end of the line.
 
   This file located at:
-###LINK: This WebSite: https://soroka-repo.github.io/pi/
+###LINK: "This WebSite:" "https://soroka-repo.github.io/pi/"
     Text: https://github.com/soroka-repo/pi/docs/README_UBUNTU_20.04-64bit
     HTML: https://github.com/soroka-repo/pi/docs/index.html
 
-  NOTE: the website "https://soroka-repo.github.io/pi/" if I update the website it seems github can take up to an hour to republish
+  Note: the website "https://soroka-repo.github.io/pi/" if I update the website it seems github can take up to an hour to republish
         the page if the website is down (github 1 hour publish time) and you need access you will have to download the file for
-        the webpage from github "https://github.com/soroka-repo/pi/docs/index.html" 
+        the webpage from github https://github.com/soroka-repo/pi/docs/index.html 
 
-  NOTE: just trying to add pictures to this webpage... still not working yet
+  Note: just trying to add pictures to this webpage... still not working yet
 
 ######################################################################
 #
@@ -39,7 +39,7 @@
       case...
  _X_ Power supply: Tried a Apple USBC power supply 5.0 @ 2.4A but PI recommends a 3.0A so may need an upgrade
                    waiting for the HIFIberry to come in since that may also drive a bigger supply
-                   Now using an old IBM laptop supply 20V @3A plugged into the HIFIberry AMP and it powers it all 
+                   Now using an old IBM laptop supply 16V @3.36A plugged into the HIFIberry AMP and it powers it all 
  _X_ 64G microSD card current boot device
  _X_ 1TB SATA III disk drive in a SATA to USB 3.0 case media storage (future part of the RAID storage) 
       Western Digital 1TBWD10SPZX SATA 6g/s in a NexStar 6g/b SATA to USB3 case Model NST-266S3 
@@ -50,7 +50,7 @@
  _R_ Cooling fan, but waiting for the hifiberry to arrive to figure out placement
  _L_ USB switch with extra power to support future RAID setup
 
-###MEDIA: rasppi.jpg
+###MEDIA: raspberrypi.jpg
 
 ###STEP: Current Running Software: X=Install Complete, P=Partial install, U=not installed yet
  _X_ docker running: - Docker allows you to use Containers- prepackaged applications the building blocks of the Cloud
@@ -88,6 +88,8 @@
 #            write the ubuntu-20.04-preinstalled-server-arm64+raspi.img.xz to the SD card
 #            grab the image from the Raspberry PI site and use your search engine to find the correct way to flash the image to the SD card
 
+###LINK: "Ubuntu Download:" "https://ubuntu.com/download/raspberry-pi"
+
 ###STEP: ___ boot the SD username/password is ubuntu/ubuntu update to a strong password (like 16 characters or more)
 
 ###STEP: ___ verify that you get a dhcp assigned IP addr
@@ -104,8 +106,8 @@
 #
 #		xubuntu-desktop - recommended DeskTop
 #		net-tools - network tools like ifconfig
-#		ksh - korn shell replaces by bash shell but still goog to have
-#		clonezilla - copy disk image lets upgrade from a microSD tao a SSD boot
+#		ksh - korn shell 
+#		clonezilla - copy disk image lets you upgrade from a microSD to SSD boot
 #
  sudo su;
  apt install xubuntu-desktop net-tools ksh clonezilla -y; 
@@ -124,7 +126,6 @@
  reboot;  
  # at the login screen at the upper right you will find an ICON that will allow you SWITCH Desktops 
  # select xubuntu it seems to work the best
-
 
 ###STEP: ___ change the userid from ubuntu to your own id
 #          example will show userid "joeuser" (sudstitute your ID for joeuser), this is for security the hackers will try "ubuntu"  
@@ -222,31 +223,6 @@ network:
  netplan try; ### this will try it and then roll it back if you messed up. nice if you are working remote to the server(PI)
 
 
-###STEP: disable UB's cloud-init
-# disable UB's Cloud-init which seems to hang things up some/most of the time 
-
-# create the file /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg
-# with just the line network: {config: disabled}
-# this is needed to keep the cloud config stuff from trying to reconfigure the network
-#
-###EXAMPLE: cat /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg 
-network: {config: disabled}
-###EXAMPLE_END:
-
-# create the empty file /etc/cloud/cloud-init.disabled
- sudo touch /etc/cloud/cloud-init.disabled;
- sudo systemctl cloud-init stop;
- sudo systemctl cloud-init disable;
-
-
-
- 
-
-# reboot and test if your network works
- reboot;
-
-
-
 ###STEP: ___ change the hostname 
 #     from: ubuntu to: something meaningful to you, this is also for security the hackers will look for hostname "ubuntu"
 #     it will tell them right away what OS you are running 
@@ -267,7 +243,9 @@ network: {config: disabled}
 #
 ######################################################################
 
+###LINK: "HiFiBerry:" "https://www.hifiberry.com/"
 
+###MEDIA: PI-HiFiBerry.jpg
 
 ###STEP: ___ Turn off the PI's Audio
 #             in file /boot/firmware/syscfg.txt comment out the line dtparam=audio=on
@@ -392,8 +370,8 @@ Recommended packages:
  reboot;
 
 ### Ref:
- https://ubuntustudio.org/tour/audio/
- https://help.ubuntu.com/community/UbuntuStudio/AudioHandbook
+###LINK: "UB Studio:" " https://ubuntustudio.org/tour/audio/"
+###LINK: "Handbook:" " https://help.ubuntu.com/community/UbuntuStudio/AudioHandbook"
 
 # "Carla" - seems to be missing have to figure out how to install...
 
@@ -412,12 +390,11 @@ Recommended packages:
 ##
 #######################################################################
 #
-####STEP: ___ Install UBStudio for Audio 
+###STEP: ___ Install UBStudio for Audio 
 #
  sudo su;
  apt install ubuntustudio-installer; ### install the installer
 # click on "Applications" (upper left ICON), "System", "Ubuntu Studio Installer" "Audio" and answer "Yes" to the Realtime question
-
 
 ######################################################################
 #
@@ -431,6 +408,29 @@ Recommended packages:
  apt install python3 python3-dev python3-venv python3-pip libffi-dev libssl-dev autoconf build-essential -y; ### install pre-reqs for home assistant
  apt install snap -y;
  snap install docker;
+
+
+###STEP: ___ disable UB's cloud-init
+# disable UB's Cloud-init which seems to hang things up some/most of the time 
+
+# create the file /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg
+# with just the line network: {config: disabled}
+# this is needed to keep the cloud config stuff from trying to reconfigure the network
+#
+###EXAMPLE: cat /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg 
+network: {config: disabled}
+###EXAMPLE_END:
+
+# create the empty file /etc/cloud/cloud-init.disabled
+ sudo touch /etc/cloud/cloud-init.disabled;
+ sudo systemctl cloud-init stop;
+ sudo systemctl cloud-init disable;
+
+# reboot and test if your network works
+    reboot;
+
+
+
 
 ###STEP: ___ test docker install
  exit; ### exit from the sudo su root session, try the following commands from your userid not root
@@ -696,7 +696,7 @@ panel_iframe:
 
 ### follow instructions at for help setting up nodered
 
- https://smarthome.university/home-assistant/node-red/installing-node-red-with-home-assistant/
+###LINK: "NodeRed HomeAssistant" "https://smarthome.university/home-assistant/node-red/installing-node-red-with-home-assistant/"
  
 
 Connecting Node-RED to Home Assistant

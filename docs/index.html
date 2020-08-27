@@ -5,10 +5,8 @@
     a { text-decoration: none; }
 </style>
 </ol><a href="index.html#PROCEDUREUbuntu200464bitinstallationonaRaspberryPI4Bw4G64GSDcardand1TBUSBdrive"><font color="blue"><h3 align='left'>  Ubuntu 20.04 64bit installation on a Raspberry PI 4 B w/4G, 64G SD card and 1TB USB drive</h3></font></a><ol>
-<font color="black"><h3 align='center'>VERSION: 20200803:1504 Peter Soroka</font></h3>
+<font color="black"><h3 align='center'>VERSION: 20200826:2147 Peter Soroka</font></h3>
 <li><a href="index.html#NOTEPreface"><font color="black"> Preface</font></a></li>
-<a href="index.html#LINKThisWebSitehttpssorokarepogithubiopi"><font color="blue">&emsp; Link:  This WebSite: https://soroka-repo.github.io/pi/<br></font></a>
-
 </ol><a href="index.html#PROCEDURECurrentHardwareSoftwareconfiguration"><font color="blue"><h3 align='left'>  Current Hardware / Software configuration</h3></font></a><ol>
 <li><a href="index.html#STEPCurrentHardware"> Current Hardware:</a></li>
 <li><a href="index.html#STEPCurrentRunningSoftwareX=InstallCompleteP=PartialinstallU=notinstalledyet"> Current Running Software: X=Install Complete, P=Partial install, U=not installed yet</a></li>
@@ -28,9 +26,6 @@
 <a href="index.html#EXAMPLEFromcatetcnetplan01netcfgyamlUB'sdefault"><font color="black">&emsp; Example:  From: cat /etc/netplan/01-netcfg.yaml UB's default<br></font></a>
 
 <a href="index.html#EXAMPLETOcatetcnetplan01netcfgyamlyourneconfig"><font color="black">&emsp; Example:  TO: cat /etc/netplan/01-netcfg.yaml your ne config<br></font></a>
-
-<li><a href="index.html#STEPdisableUB'scloudinit"> disable UB's cloud-init</a></li>
-<a href="index.html#EXAMPLEcatetccloudcloudcfgd99disablenetworkconfigcfg"><font color="black">&emsp; Example:  cat /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg<br></font></a>
 
 <li><a href="index.html#STEP___changethehostname"> ___ change the hostname</a></li>
 </ol><a href="index.html#PROCEDUREHIFIBerryaudioupgradeADCDACProandAMP60"><font color="blue"><h3 align='left'>  HIFIBerry audio upgrade ADC +DAC Pro and AMP60</h3></font></a><ol>
@@ -52,9 +47,12 @@
 <li><a href="index.html#STEP___InstallUBStudioforAudio"> ___ Install UBStudio for Audio</a></li>
 <li><a href="index.html#STEP___Rebootandtestwhatworks"> ___ Reboot and test what works</a></li>
 </ol><a href="index.html#PROCEDUREInstallUbuntuStudioforAudioeaisermethod"><font color="blue"><h3 align='left'>  Install Ubuntu Studio for Audio (eaiser method)</h3></font></a><ol>
-<li><a href="index.html##STEP___InstallUBStudioforAudio"># ___ Install UBStudio for Audio</a></li>
+<li><a href="index.html#STEP___InstallUBStudioforAudio"> ___ Install UBStudio for Audio</a></li>
 </ol><a href="index.html#PROCEDUREInstallandsetupdocker"><font color="blue"><h3 align='left'>  Install and setup docker</h3></font></a><ol>
 <li><a href="index.html#STEP___installdocker"> ___ install docker</a></li>
+<li><a href="index.html#STEP___disableUB'scloudinit"> ___ disable UB's cloud-init</a></li>
+<a href="index.html#EXAMPLEcatetccloudcloudcfgd99disablenetworkconfigcfg"><font color="black">&emsp; Example:  cat /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg<br></font></a>
+
 <li><a href="index.html#STEP___testdockerinstall"> ___ test docker install</a></li>
 <li><a href="index.html#STEP___runHomeAssistant"> ___ run Home Assistant</a></li>
 <a href="index.html#EXAMPLEcatdockercomposeyml"><font color="black">&emsp; Example:  cat docker-compose.yml<br></font></a>
@@ -98,7 +96,7 @@
 ######################################################################
 
 
-</h4></pre><font size="2"><h1 align='center'>VERSION: 20200803:1504 Peter Soroka</h1></font><pre><h4>
+</h4></pre><font size="2"><h1 align='center'>VERSION: 20200826:2147 Peter Soroka</h1></font><pre><h4>
 
 </h4></pre><h3 align='left' id="NOTEPreface">NOTE: Preface</h3><pre><h4>
      This is a working document of the progress on my PI project not all items
@@ -109,15 +107,15 @@
     characters to the end of the line.
 
   This file located at:
-</h5></pre><h3 align='left' id="LINKThisWebSitehttpssorokarepogithubiopi">LINK: This WebSite: https://soroka-repo.github.io/pi/</h5><pre><h4>
+<a href="https://soroka-repo.github.io/pi/"><font color="black">This WebSite:<font color="blue"> https://soroka-repo.github.io/pi/<font color="black"></a>
     Text: https://github.com/soroka-repo/pi/docs/README_UBUNTU_20.04-64bit
     HTML: https://github.com/soroka-repo/pi/docs/index.html
 
-</h4></pre><h3 align='left' id="NOTEthewebsite"httpssorokarepogithubiopi"ifIupdatethewebsiteitseemsgithubcantakeuptoanhourtorepublish">NOTE: the website "https://soroka-repo.github.io/pi/" if I update the website it seems github can take up to an hour to republish</h3><pre><h4>
+  Note: the website "https://soroka-repo.github.io/pi/" if I update the website it seems github can take up to an hour to republish
         the page if the website is down (github 1 hour publish time) and you need access you will have to download the file for
-        the webpage from github "https://github.com/soroka-repo/pi/docs/index.html" 
+        the webpage from github https://github.com/soroka-repo/pi/docs/index.html 
 
-</h4></pre><h3 align='left' id="NOTEjusttryingtoaddpicturestothiswebpagestillnotworkingyet">NOTE: just trying to add pictures to this webpage... still not working yet</h3><pre><h4>
+  Note: just trying to add pictures to this webpage... still not working yet
 
 ######################################################################
 #
@@ -131,7 +129,7 @@
       case...
  _X_ Power supply: Tried a Apple USBC power supply 5.0 @ 2.4A but PI recommends a 3.0A so may need an upgrade
                    waiting for the HIFIberry to come in since that may also drive a bigger supply
-                   Now using an old IBM laptop supply 20V @3A plugged into the HIFIberry AMP and it powers it all 
+                   Now using an old IBM laptop supply 16V @3.36A plugged into the HIFIberry AMP and it powers it all 
  _X_ 64G microSD card current boot device
  _X_ 1TB SATA III disk drive in a SATA to USB 3.0 case media storage (future part of the RAID storage) 
       Western Digital 1TBWD10SPZX SATA 6g/s in a NexStar 6g/b SATA to USB3 case Model NST-266S3 
@@ -142,8 +140,9 @@
  _R_ Cooling fan, but waiting for the hifiberry to arrive to figure out placement
  _L_ USB switch with extra power to support future RAID setup
 
-<h4 align='center' id="MEDIArasppijpg">MEDIA: rasppi.jpg
+<h4 align='center' id="MEDIAraspberrypijpg">MEDIA: raspberrypi.jpg
 </h4><pre><p style="border:4px; border-style:solid; border-color:black; padding: 2em;"><span style="white-space: nowrap;">
+<img src="./media/raspberrypi.jpg" alt="pi" style="width:600px;height:600px;">
 
 </h4></pre><h3 align='left' id="STEPCurrentRunningSoftwareX=InstallCompleteP=PartialinstallU=notinstalledyet">STEP: Current Running Software: X=Install Complete, P=Partial install, U=not installed yet</h3><pre><h4>
  _X_ docker running: - Docker allows you to use Containers- prepackaged applications the building blocks of the Cloud
@@ -181,6 +180,8 @@
 #            write the ubuntu-20.04-preinstalled-server-arm64+raspi.img.xz to the SD card
 #            grab the image from the Raspberry PI site and use your search engine to find the correct way to flash the image to the SD card
 
+<a href="https://ubuntu.com/download/raspberry-pi"><font color="black">Ubuntu Download:<font color="blue"> https://ubuntu.com/download/raspberry-pi<font color="black"></a>
+
 </h4></pre><h3 align='left' id="STEP___boottheSDusernamepasswordisubuntuubuntuupdatetoastrongpasswordlike16charactersormore">STEP: ___ boot the SD username/password is ubuntu/ubuntu update to a strong password (like 16 characters or more)</h3><pre><h4>
 
 </h4></pre><h3 align='left' id="STEP___verifythatyougetadhcpassignedIPaddr">STEP: ___ verify that you get a dhcp assigned IP addr</h3><pre><h4>
@@ -197,8 +198,8 @@
 #
 #		xubuntu-desktop - recommended DeskTop
 #		net-tools - network tools like ifconfig
-#		ksh - korn shell replaces by bash shell but still goog to have
-#		clonezilla - copy disk image lets upgrade from a microSD tao a SSD boot
+#		ksh - korn shell 
+#		clonezilla - copy disk image lets you upgrade from a microSD to SSD boot
 #
  sudo su;
  apt install xubuntu-desktop net-tools ksh clonezilla -y; 
@@ -217,7 +218,6 @@
  reboot;  
  # at the login screen at the upper right you will find an ICON that will allow you SWITCH Desktops 
  # select xubuntu it seems to work the best
-
 
 </h4></pre><h3 align='left' id="STEP___changetheuseridfromubuntutoyourownid">STEP: ___ change the userid from ubuntu to your own id</h3><pre><h4>
 #          example will show userid "joeuser" (sudstitute your ID for joeuser), this is for security the hackers will try "ubuntu"  
@@ -257,7 +257,7 @@ network:</span>
             dhcp4: true
             optional: true
     version: 2
-</p></pre>
+</p><h4>
 
 
 ###to: this is what I have, change the IPs addrs as needed, replace the XXXX.. in wlan0 with your WIFI network and password
@@ -310,37 +310,11 @@ network:</span>
         - to: 0.0.0.0/0
           via: 192.168.3.1
           metric: 100
-</p></pre>
+</p><h4>
 
  netplan apply; ### this will test and apply your new /etc/netplan/01-netcfg.yaml network config file
 #or*
  netplan try; ### this will try it and then roll it back if you messed up. nice if you are working remote to the server(PI)
-
-
-</h4></pre><h3 align='left' id="STEPdisableUB'scloudinit">STEP: disable UB's cloud-init</h3><pre><h4>
-# disable UB's Cloud-init which seems to hang things up some/most of the time 
-
-# create the file /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg
-# with just the line network: {config: disabled}
-# this is needed to keep the cloud config stuff from trying to reconfigure the network
-#
-<h4 align='left' id="EXAMPLEcatetccloudcloudcfgd99disablenetworkconfigcfg">EXAMPLE: cat /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg
-</h4><pre><p style="border:3px; border-style:solid; border-color:green; padding: 0em;"><span style="white-space: nowrap;">
-network: {config: disabled}</span>
-</p></pre>
-
-# create the empty file /etc/cloud/cloud-init.disabled
- sudo touch /etc/cloud/cloud-init.disabled;
- sudo systemctl cloud-init stop;
- sudo systemctl cloud-init disable;
-
-
-
- 
-
-# reboot and test if your network works
- reboot;
-
 
 
 </h4></pre><h3 align='left' id="STEP___changethehostname">STEP: ___ change the hostname</h3><pre><h4>
@@ -363,7 +337,11 @@ hostnamectl set-hostname &ltnew_host_name&gt;
 #
 ######################################################################
 
+<a href="https://www.hifiberry.com/"><font color="black">HiFiBerry:<font color="blue"> https://www.hifiberry.com/<font color="black"></a>
 
+<h4 align='center' id="MEDIAPIHiFiBerryjpg">MEDIA: PI-HiFiBerry.jpg
+</h4><pre><p style="border:4px; border-style:solid; border-color:black; padding: 2em;"><span style="white-space: nowrap;">
+<img src="./media/PI-HiFiBerry.jpg" alt="pi" style="width:600px;height:600px;">
 
 </h4></pre><h3 align='left' id="STEP___TurnoffthePI'sAudio">STEP: ___ Turn off the PI's Audio</h3><pre><h4>
 #             in file /boot/firmware/syscfg.txt comment out the line dtparam=audio=on
@@ -380,7 +358,7 @@ enable_uart=1
 dtparam=i2c_arm=on
 dtparam=spi=on
 cmdline=cmdline.txt
-</p></pre>
+</p><h4>
 
 
 </h4></pre><h3 align='left' id="STEP___AddtheHIFIBerrydriverstothebootfirmwareusercfgtxt">STEP: ___ Add the HIFIBerry drivers to the /boot/firmware/usercfg.txt</h3><pre><h4>
@@ -391,7 +369,7 @@ cmdline=cmdline.txt
 # this file. Please refer to the README file for a description of the various
 # configuration files on the boot partition.
 dtoverlay=hifiberry-dacplusadcpro
-</p></pre>
+</p><h4>
 
 </h4></pre><h3 align='left' id="STEP___RebootthenTest">STEP: ___ Reboot then Test</h3><pre><h4>
  sudo su;
@@ -404,7 +382,7 @@ snd_soc_hifiberry_dacplusadcpro    20480  4</span>
 snd_soc_core          258048  4 snd_soc_pcm512x,snd_soc_pcm186x,snd_soc_bcm2835_i2s,snd_soc_hifiberry_dacplusadcpro
 snd_pcm               143360  9 snd_soc_pcm512x,snd_soc_pcm186x,snd_soc_bcm2835_i2s,snd_soc_hifiberry_dacplusadcpro,snd_pcm_oss,snd_soc_core,snd_pcm_dmaengine
 clk_hifiberry_dacpro    16384  1
-</p></pre>
+</p><h4>
 
 
 # check aplay command line player with aplay -l
@@ -414,7 +392,7 @@ clk_hifiberry_dacpro    16384  1
 card 0: sndrpihifiberry [snd_rpi_hifiberry_dacplusadcpro], device 0: HiFiBerry DAC+ADC Pro HiFi multicodec-0 [HiFiBerry DAC+ADC Pro HiFi multicodec-0]
   Subdevices: 0/1
   Subdevice #0: subdevice #0
-</p></pre>
+</p><h4>
 
 # adjust you don't want to blow your speakers out at first try bring it down to 80%
  amixer sget Digital ### get
@@ -430,7 +408,7 @@ pcm.!default {</span>
 ctl.!default {
   type hw card 0
 }
-</p></pre>
+</p><h4>
 
 
 # try
@@ -493,8 +471,8 @@ Recommended packages:
  reboot;
 
 ### Ref:
- https://ubuntustudio.org/tour/audio/
- https://help.ubuntu.com/community/UbuntuStudio/AudioHandbook
+<a href=" https://ubuntustudio.org/tour/audio/"><font color="black">UB Studio:<font color="blue">  https://ubuntustudio.org/tour/audio/<font color="black"></a>
+<a href=" https://help.ubuntu.com/community/UbuntuStudio/AudioHandbook"><font color="black">Handbook:<font color="blue">  https://help.ubuntu.com/community/UbuntuStudio/AudioHandbook<font color="black"></a>
 
 # "Carla" - seems to be missing have to figure out how to install...
 
@@ -513,12 +491,11 @@ Recommended packages:
 ##
 #######################################################################
 #
-</h4></pre><h3 align='left' id="#STEP___InstallUBStudioforAudio">#STEP: ___ Install UBStudio for Audio</h3><pre><h4>
+</h4></pre><h3 align='left' id="STEP___InstallUBStudioforAudio">STEP: ___ Install UBStudio for Audio</h3><pre><h4>
 #
  sudo su;
  apt install ubuntustudio-installer; ### install the installer
 # click on "Applications" (upper left ICON), "System", "Ubuntu Studio Installer" "Audio" and answer "Yes" to the Realtime question
-
 
 ######################################################################
 #
@@ -532,6 +509,30 @@ Recommended packages:
  apt install python3 python3-dev python3-venv python3-pip libffi-dev libssl-dev autoconf build-essential -y; ### install pre-reqs for home assistant
  apt install snap -y;
  snap install docker;
+
+
+</h4></pre><h3 align='left' id="STEP___disableUB'scloudinit">STEP: ___ disable UB's cloud-init</h3><pre><h4>
+# disable UB's Cloud-init which seems to hang things up some/most of the time 
+
+# create the file /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg
+# with just the line network: {config: disabled}
+# this is needed to keep the cloud config stuff from trying to reconfigure the network
+#
+<h4 align='left' id="EXAMPLEcatetccloudcloudcfgd99disablenetworkconfigcfg">EXAMPLE: cat /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg
+</h4><pre><p style="border:3px; border-style:solid; border-color:green; padding: 0em;"><span style="white-space: nowrap;">
+network: {config: disabled}</span>
+</p><h4>
+
+# create the empty file /etc/cloud/cloud-init.disabled
+ sudo touch /etc/cloud/cloud-init.disabled;
+ sudo systemctl cloud-init stop;
+ sudo systemctl cloud-init disable;
+
+# reboot and test if your network works
+    reboot;
+
+
+
 
 </h4></pre><h3 align='left' id="STEP___testdockerinstall">STEP: ___ test docker install</h3><pre><h4>
  exit; ### exit from the sudo su root session, try the following commands from your userid not root
@@ -571,7 +572,7 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-</p></pre>
+</p><h4>
 
 
 
@@ -630,7 +631,7 @@ services:
       - /home/soroka/portainer:/data:rw
       - /var/run/docker.sock:/var/run/docker.sock
     restart: "always"
-</p></pre>
+</p><h4>
 
 
 ### rebuild and start up the image 
@@ -697,7 +698,7 @@ services:
       interval: 30s
       timeout: 10s
       retries: 5
-</p></pre>
+</p><h4>
 
 
 ### rebuild
@@ -719,7 +720,7 @@ services:
 </h4><pre><p style="border:3px; border-style:solid; border-color:green; padding: 0em;"><span style="white-space: nowrap;">
 Password: </span>
 $2a$0zI2SzwCq2lmU7WJjNcCnD.eQkrM5PhX40LJXFfo2DOqZo..qxxdiS
-</p></pre>
+</p><h4>
 
 
 # In file ~/nodered/settings.js search for 'adminAuth" section, uncomment it and put in the hash
@@ -739,7 +740,7 @@ $2a$0zI2SzwCq2lmU7WJjNcCnD.eQkrM5PhX40LJXFfo2DOqZo..qxxdiS
     //    }]
     //},
 
-</p></pre>
+</p><h4>
 
 
 <h4 align='left' id="EXAMPLEafteryoureditcat~noderedsettingsjs;">EXAMPLE: after your edit cat ~/nodered/settings.js;
@@ -758,7 +759,7 @@ $2a$0zI2SzwCq2lmU7WJjNcCnD.eQkrM5PhX40LJXFfo2DOqZo..qxxdiS
         }]
     },
 
-</p></pre>
+</p><h4>
 
 
 # save the file and restart node-red and login to node-red on port 1880 of yout local IP
@@ -796,7 +797,7 @@ panel_iframe:
     title: 'Node-Red'
     url: 'http://127.0.0.1:1880'
     icon: mdi:nodejs
-</p></pre>
+</p><h4>
 
 # restart HomeAssistant to pick up the node-red icon 
  sudo docker-compose restart homeassistant;
@@ -804,7 +805,7 @@ panel_iframe:
 
 ### follow instructions at for help setting up nodered
 
- https://smarthome.university/home-assistant/node-red/installing-node-red-with-home-assistant/
+<a href="https://smarthome.university/home-assistant/node-red/installing-node-red-with-home-assistant/"><font color="black">NodeRed HomeAssistant<font color="blue"> https://smarthome.university/home-assistant/node-red/installing-node-red-with-home-assistant/<font color="black"></a>
  
 
 Connecting Node-RED to Home Assistant
