@@ -331,7 +331,14 @@ ctl.!default {
  eq; ### to start the equalizer with the link
  eq&; ### to start the eq in backround so you get your terminal back note: it will still post "saving state" to your terminal if you make changes
 
+######################################################################
+##
+####PROCEDURE: Install tuxguitar
+##
+#######################################################################
 
+###STEP:
+ apt install tuxguitar tuxguitar-jsa
 
 ######################################################################
 #
@@ -828,6 +835,63 @@ Use of Node-RED for HA automation is for another discussion, but at least now yo
 ###STEP: Complete: the hifiberry PRO ADC/DAC and AMP when it arrives
 ###STEP: ADD: Plex with docker, add a better mount for the USB drive
 ###STEP: ADD: get the PI-4 to boot with a USB 3.0 SATA III SSD without the SD card
+#
+# Update the PI's firmware:
+ apt install rpi-eeprom
+ rpi-eeprom-update
+ apt install rpi-eeprom
+ rpi-eeprom-update
+ reboot
+ rpi-eeprom-update
+
+# create the same partitions on the SSD that the SD card has:
+ fdisk -l
+
+
+Disk /dev/mmcblk0: 59.49 GiB, 63864569856 bytes, 124735488 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disklabel type: dos
+Disk identifier: 0x87c6153d
+
+Device         Boot  Start       End   Sectors  Size Id Type
+/dev/mmcblk0p1 *      2048    526335    524288  256M  c W95 FAT32 (LBA)
+/dev/mmcblk0p2      526336 124735454 124209119 59.2G 83 Linux
+
+
+Disk /dev/sda: 465.78 GiB, 500107862016 bytes, 976773168 sectors
+Disk model: 700 500GB       
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 4096 bytes
+I/O size (minimum/optimal): 4096 bytes / 4096 bytes
+Disklabel type: dos
+Disk identifier: 0x87c6153d
+
+Device     Boot  Start       End   Sectors   Size Id Type
+/dev/sda1  *      2048    526335    524288   256M  c W95 FAT32 (LBA)
+/dev/sda2       526336 976773134 976246799 465.5G 83 Linux
+
+# check the mounts with lsblk -fs:
+ sda1      vfat     system-boot 0468-A52F                             123.7M    51% /mnt/sda1
+└─sda                                                                              
+sda2      ext4     writable    5fcce78f-2de3-4805-8ffa-d0f11247d5bb  381.7G    13% /mnt/sda2
+└─sda                                                                              
+mmcblk0p1 vfat     system-boot 0468-A52F                             123.7M    51% /boot/firmware
+└─mmcblk0                                                                          
+mmcblk0p2 ext4     writable    5fcce78f-2de3-4805-8ffa-d0f11247d5bb   39.2G    29% /
+└─mmcblk0                                                                          
+
+
+
+# rsync the partitions
+ rsync -av /boot/firmware/* /mnt/sda1/.
+ rsync -av --exclude '/mnt/sda2' /* /mnt/sda2/.
+# clean up
+ rm -rf /mnt/sda2/mnt/sda1
+ rm -rf /mnt/sda2/boot/firmware
+
+
 ###STEP: ADD: swap space on the SSD for the PI
 ###STEP: ADD: cooling fan and overclock
 ###STEP: ADD: external uFL wifi connector

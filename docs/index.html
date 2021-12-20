@@ -43,6 +43,7 @@
 <a href="index.html#EXAMPLEcatetcasoundconf;"><font color="black">&emsp; Example:  cat /etc/asound.conf;<br></font></a>
 
 <li><a href="index.html#STEPaddthepulseequalizer"> add the pulse equalizer</a></li>
+<li><a href="index.html#STEP"></a></li>
 </ol><a href="index.html#PROCEDUREInstallUbuntuStudioforAudiodebugmethod"><font color="blue"><h3 align='left'>  Install Ubuntu Studio for Audio (debug method)</h3></font></a><ol>
 <li><a href="index.html#STEP___InstallUBStudioforAudio"> ___ Install UBStudio for Audio</a></li>
 <li><a href="index.html#STEP___Rebootandtestwhatworks"> ___ Reboot and test what works</a></li>
@@ -432,7 +433,14 @@ echo -e "### add for pulse equalizer &#92nload-module module-equalizer-sink &#92
  eq; ### to start the equalizer with the link
  eq&; ### to start the eq in backround so you get your terminal back note: it will still post "saving state" to your terminal if you make changes
 
+######################################################################
+##
+</h4></pre><h2 align='left' id="#PROCEDUREInstalltuxguitar">#PROCEDURE: Install tuxguitar</h2><pre><h4>
+##
+#######################################################################
 
+</h4></pre><h3 align='left' id="STEP">STEP:</h3><pre><h4>
+ apt install tuxguitar tuxguitar-jsa
 
 ######################################################################
 #
@@ -939,6 +947,63 @@ Use of Node-RED for HA automation is for another discussion, but at least now yo
 </h4></pre><h3 align='left' id="STEPCompletethehifiberryPROADCDACandAMPwhenitarrives">STEP: Complete: the hifiberry PRO ADC/DAC and AMP when it arrives</h3><pre><h4>
 </h4></pre><h3 align='left' id="STEPADDPlexwithdockeraddabettermountfortheUSBdrive">STEP: ADD: Plex with docker, add a better mount for the USB drive</h3><pre><h4>
 </h4></pre><h3 align='left' id="STEPADDgetthePI4tobootwithaUSB30SATAIIISSDwithouttheSDcard">STEP: ADD: get the PI-4 to boot with a USB 3.0 SATA III SSD without the SD card</h3><pre><h4>
+#
+# Update the PI's firmware:
+ apt install rpi-eeprom
+ rpi-eeprom-update
+ apt install rpi-eeprom
+ rpi-eeprom-update
+ reboot
+ rpi-eeprom-update
+
+# create the same partitions on the SSD that the SD card has:
+ fdisk -l
+
+
+Disk /dev/mmcblk0: 59.49 GiB, 63864569856 bytes, 124735488 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disklabel type: dos
+Disk identifier: 0x87c6153d
+
+Device         Boot  Start       End   Sectors  Size Id Type
+/dev/mmcblk0p1 *      2048    526335    524288  256M  c W95 FAT32 (LBA)
+/dev/mmcblk0p2      526336 124735454 124209119 59.2G 83 Linux
+
+
+Disk /dev/sda: 465.78 GiB, 500107862016 bytes, 976773168 sectors
+Disk model: 700 500GB       
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 4096 bytes
+I/O size (minimum/optimal): 4096 bytes / 4096 bytes
+Disklabel type: dos
+Disk identifier: 0x87c6153d
+
+Device     Boot  Start       End   Sectors   Size Id Type
+/dev/sda1  *      2048    526335    524288   256M  c W95 FAT32 (LBA)
+/dev/sda2       526336 976773134 976246799 465.5G 83 Linux
+
+# check the mounts with lsblk -fs:
+ sda1      vfat     system-boot 0468-A52F                             123.7M    51% /mnt/sda1
+└─sda                                                                              
+sda2      ext4     writable    5fcce78f-2de3-4805-8ffa-d0f11247d5bb  381.7G    13% /mnt/sda2
+└─sda                                                                              
+mmcblk0p1 vfat     system-boot 0468-A52F                             123.7M    51% /boot/firmware
+└─mmcblk0                                                                          
+mmcblk0p2 ext4     writable    5fcce78f-2de3-4805-8ffa-d0f11247d5bb   39.2G    29% /
+└─mmcblk0                                                                          
+
+
+
+# rsync the partitions
+ rsync -av /boot/firmware/* /mnt/sda1/.
+ rsync -av --exclude '/mnt/sda2' /* /mnt/sda2/.
+# clean up
+ rm -rf /mnt/sda2/mnt/sda1
+ rm -rf /mnt/sda2/boot/firmware
+
+
 </h4></pre><h3 align='left' id="STEPADDswapspaceontheSSDforthePI">STEP: ADD: swap space on the SSD for the PI</h3><pre><h4>
 </h4></pre><h3 align='left' id="STEPADDcoolingfanandoverclock">STEP: ADD: cooling fan and overclock</h3><pre><h4>
 </h4></pre><h3 align='left' id="STEPADDexternaluFLwificonnector">STEP: ADD: external uFL wifi connector</h3><pre><h4>
