@@ -979,7 +979,7 @@ Sector size (logical/physical): 512 bytes / 4096 bytes
 I/O size (minimum/optimal): 4096 bytes / 4096 bytes
 Disklabel type: dos
 Disk identifier: 0x87c6153d
-
+gnome-disks
 Device     Boot  Start       End   Sectors   Size Id Type
 /dev/sda1  *      2048    526335    524288   256M  c W95 FAT32 (LBA)
 /dev/sda2       526336 976773134 976246799 465.5G 83 Linux
@@ -1000,16 +1000,59 @@ mmcblk0p2 ext4     writable    5fcce78f-2de3-4805-8ffa-d0f11247d5bb   39.2G    2
 # rsync the partitions
 # create the EX file
  cat EX
-/mnt/sda1
+/mnt/sda1gnome-disks
 /mnt/sda2
 /proc
-/sys
 /boot/firmware
 #
 #
  rsync -av /boot/firmware/* /mnt/sda1/.
  
  rsync -av --exclude-from=/EX /* /mnt/sda2/.
+
+
+# change the eeprom:
+ rpi-eeprom-config -e
+
+rpi-eeprom-config 
+[all]
+BOOT_UART=0
+WAKE_ON_GPIO=1
+POWER_OFF_ON_HALT=0
+DHCP_TIMEOUT=45000
+DHCP_REQ_TIMEOUT=4000
+TFTP_FILE_TIMEOUT=30000
+ENABLE_SELF_UPDATE=1
+DISABLE_HDMI=0
+BOOT_ORDER=0xf41
+SD_BOOT_MAX_RETRIES=3
+
+# find the device ID: then use it to add quirks to the cmdline.txt
+ lsusb
+ Bus 002 Device 002: ID 174c:1153 ASMedia Technology Inc. ASM1153 SATA 3Gb/s bridge
+
+
+cat /boot/firmware/cmdline.txt 
+usb-storage.quirks=174c:1153:u net.ifnames=0 dwc_otg.lpm_enable=0 console=serial0,115200 console=tty1 root=LABEL=writable rootfstype=ext4 elevator=deadline rootwait fixrtc
+
+
+
+# change the disk PARTUUID so they are different
+root@136GretnaWoods:~# blkid
+/dev/mmcblk0p1: LABEL_FATBOOT="system-boot" LABEL="system-boot" UUID="0468-A52F" TYPE="vfat" PARTUUID="87c6153d-01"
+/dev/mmcblk0p2: LABEL="writable" UUID="5fcce78f-2de3-4805-8ffa-d0f11247d5bb" TYPE="ext4" PARTUUID="87c6153d-02"
+/dev/sda1: LABEL_FATBOOT="system-boot" LABEL="system-boot" UUID="0468-A52F" TYPE="vfat" PARTUUID="d34db33f-01"
+/dev/sda2: LABEL="writable" UUID="5fcce78f-2de3-4805-8ffa-d0f11247d5bb" TYPE="ext4" PARTUUID="d34db33f-02"
+ 
+
+
+
+
+# measure boot performance
+ apt install gnome-disk-utility
+ gnome-disks
+
+
 
 
 </h4></pre><h3 align='left' id="STEPADDswapspaceontheSSDforthePI">STEP: ADD: swap space on the SSD for the PI</h3><pre><h4>
