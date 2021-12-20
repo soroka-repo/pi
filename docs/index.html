@@ -5,7 +5,7 @@
     a { text-decoration: none; }
 </style>
 </ol><a href="index.html#PROCEDUREUbuntu200464bitinstallationonaRaspberryPI4Bw4G64GSDcardand1TBUSBdrive"><font color="blue"><h3 align='left'>  Ubuntu 20.04 64bit installation on a Raspberry PI 4 B w/4G, 64G SD card and 1TB USB drive</h3></font></a><ol>
-<font color="black"><h3 align='center'>VERSION: 20200826:2330 Peter Soroka</font></h3>
+<font color="black"><h3 align='center'>VERSION: 20211219:2249 Peter Soroka</font></h3>
 <li><a href="index.html#NOTEPreface"><font color="black"> Preface</font></a></li>
 </ol><a href="index.html#PROCEDURECurrentHardwareSoftwareconfiguration"><font color="blue"><h3 align='left'>  Current Hardware / Software configuration</h3></font></a><ol>
 <li><a href="index.html#STEPCurrentHardware"> Current Hardware:</a></li>
@@ -30,7 +30,7 @@
 <li><a href="index.html#STEP___changethehostname"> ___ change the hostname</a></li>
 </ol><a href="index.html#PROCEDUREHIFIBerryaudioupgradeADCDACProandAMP60"><font color="blue"><h3 align='left'>  HIFIBerry audio upgrade ADC +DAC Pro and AMP60</h3></font></a><ol>
 <li><a href="index.html#STEP___TurnoffthePI'sAudio"> ___ Turn off the PI's Audio</a></li>
-<a href="index.html#EXAMPLEcatboorfirmwaresyscfgtxt"><font color="black">&emsp; Example:  cat /boor/firmware/syscfg.txt<br></font></a>
+<a href="index.html#EXAMPLEcatbootfirmwaresyscfgtxt"><font color="black">&emsp; Example:  cat /boot/firmware/syscfg.txt<br></font></a>
 
 <li><a href="index.html#STEP___AddtheHIFIBerrydriverstothebootfirmwareusercfgtxt"> ___ Add the HIFIBerry drivers to the /boot/firmware/usercfg.txt</a></li>
 <a href="index.html#EXAMPLEcatbootfirmwareusercfgtxt"><font color="black">&emsp; Example:  cat /boot/firmware/usercfg.txt<br></font></a>
@@ -97,7 +97,7 @@
 ######################################################################
 
 
-</h4></pre><font size="2"><h1 align='center'>VERSION: 20200826:2330 Peter Soroka</h1></font><pre><h4>
+</h4></pre><font size="2"><h1 align='center'>VERSION: 20211219:2249 Peter Soroka</h1></font><pre><h4>
 
 </h4></pre><h3 align='left' id="NOTEPreface">NOTE: Preface</h3><pre><h4>
      This is a working document of the progress on my PI project not all items
@@ -347,7 +347,7 @@ hostnamectl set-hostname &ltnew_host_name&gt;
 </h4></pre><h3 align='left' id="STEP___TurnoffthePI'sAudio">STEP: ___ Turn off the PI's Audio</h3><pre><h4>
 #             in file /boot/firmware/syscfg.txt comment out the line dtparam=audio=on
 
-<h4 align='left' id="EXAMPLEcatboorfirmwaresyscfgtxt">EXAMPLE: cat /boor/firmware/syscfg.txt
+<h4 align='left' id="EXAMPLEcatbootfirmwaresyscfgtxt">EXAMPLE: cat /boot/firmware/syscfg.txt
 </h4><pre><p style="border:3px; border-style:solid; border-color:green; padding: 0em;"><span style="white-space: nowrap;">
 # This file is intended to be modified by the pibootctl utility. User</span>
 # configuration changes should be placed in "usercfg.txt". Please refer to the
@@ -996,12 +996,20 @@ mmcblk0p2 ext4     writable    5fcce78f-2de3-4805-8ffa-d0f11247d5bb   39.2G    2
 
 
 
+
 # rsync the partitions
+# create the EX file
+ cat EX
+/mnt/sda1
+/mnt/sda2
+/proc
+/sys
+/boot/firmware
+#
+#
  rsync -av /boot/firmware/* /mnt/sda1/.
- rsync -av --exclude '/mnt/sda2' /* /mnt/sda2/.
-# clean up
- rm -rf /mnt/sda2/mnt/sda1
- rm -rf /mnt/sda2/boot/firmware
+ 
+ rsync -av --exclude-from=/EX /* /mnt/sda2/.
 
 
 </h4></pre><h3 align='left' id="STEPADDswapspaceontheSSDforthePI">STEP: ADD: swap space on the SSD for the PI</h3><pre><h4>

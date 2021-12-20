@@ -6,7 +6,7 @@
 ######################################################################
 
 
-###VERSION: 20200826:2330 Peter Soroka
+###VERSION: 20211219:2249 Peter Soroka
 
 ###NOTE: Preface
      This is a working document of the progress on my PI project not all items
@@ -250,7 +250,7 @@ network:
 ###STEP: ___ Turn off the PI's Audio
 #             in file /boot/firmware/syscfg.txt comment out the line dtparam=audio=on
 
-###EXAMPLE: cat /boor/firmware/syscfg.txt
+###EXAMPLE: cat /boot/firmware/syscfg.txt
 # This file is intended to be modified by the pibootctl utility. User
 # configuration changes should be placed in "usercfg.txt". Please refer to the
 # README file for a description of the various configuration files on the boot
@@ -884,12 +884,20 @@ mmcblk0p2 ext4     writable    5fcce78f-2de3-4805-8ffa-d0f11247d5bb   39.2G    2
 
 
 
+
 # rsync the partitions
+# create the EX file
+ cat EX
+/mnt/sda1
+/mnt/sda2
+/proc
+/sys
+/boot/firmware
+#
+#
  rsync -av /boot/firmware/* /mnt/sda1/.
- rsync -av --exclude '/mnt/sda2' /* /mnt/sda2/.
-# clean up
- rm -rf /mnt/sda2/mnt/sda1
- rm -rf /mnt/sda2/boot/firmware
+ 
+ rsync -av --exclude-from=/EX /* /mnt/sda2/.
 
 
 ###STEP: ADD: swap space on the SSD for the PI
