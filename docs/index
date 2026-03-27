@@ -1,0 +1,15 @@
+###VERSION: PS20260327:1240
+######################################
+#
+# Directions for LinuxCNC running a realtime kernel Debian Bookwork or Trixie
+# also a good general reference for Bookworm or Trixie OS (Debian or Raspberry OS...)
+#
+###LINK: ./README_linuxCNC_OS_Updates.html
+#
+######################################
+#
+# Directions for older Ubuntu studio setup (No Longer Used)
+#
+###LINK: ./README_UBUNTU_20.04-64bit.html
+#
+######################################

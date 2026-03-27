@@ -1,0 +1,287 @@
+###################################
+###PROCEDURE: Debian setup for LinuxCNC
+#
+# Peter Soroka   
+###VERSION: PS20260327:1106
+# 
+###################################
+###STEP: Linuxcnc hardware
+###################################
+### YOU will need to have an OS a realtime kernel to operate the CNC's stepper/servo motors. 
+### So:
+### Download an OS image from LinuxCNC to a microSD card 
+###  from https://linuxcnc.org/downloads:
+###   "LinuxCNC 2.9.4 Raspberry Pi 5 OS based on Debian Bookworm Raspberry Pi 5 Uspace"
+###   "LinuxCNC 2.9.8 Raspberry Pi 5 OS based on Debian Trixe Raspberry Pi 5 Uspace"
+### That image comes with Userid=cnc Password=cnc preconfiged
+### a USB docking station with a ethernet port for connection to Mesa 7I96S card
+### PI 5 connected over Ethernet to a Mesa 7196S then to the CNC 
+### PI 5 has a NVMe Duo Base from PIMORONI with a 1Tbyte NVME in one of it's slots
+
+ 
+###################################
+
+
+
+
+###################################
+###STEP: Setup Timezone
+###################################
+ timedatectl  ### to check what you have set
+ timedatectl list-timezones  ### to list the valid timezones
+ timedatectl list-timezones|grep US  ### to list just valid timezones for the US
+ sudo timedatectl set-timezone US/Central ### to set to US Central timezone
+ timedatectl ### to recheck that it was set
+
+###################################
+###STEP: Update RPI firmware
+###################################
+ rpi-update
+
+###################################
+###:STEP Install apt update, upgrade and install the following 
+###################################
+ sudo su
+ apt update
+ apt upgrade
+ apt install vlc vim gedit mtools
+ apt install handbrake handbrake-cli           ### Video Transcoder
+
+###################################
+###STEP: Install pi-apps and the following apps which are my favorites and must haves
+###################################
+ wget -qO- https://raw.githubusercontent.com/Botspot/pi-apps/master/install | bash
+### Use pi-apps to install the following 
+ btop++
+ Chromium
+ GParted
+ LibreOffice
+ Nautilus
+ OpenSCAD
+ Snap Store  ### to run: /snap/bin/snap-store
+ Transmission
+
+################################### 
+###STEP: Install ssh
+###################################
+ sudo apt update
+ sudo apt install openssh-server
+ systemctl status ssh
+ systemctl start ssh   ### to start ssh 
+ systemctl enable ssh   ### to enable ssh starting at boot
+
+###################################
+###STEP: Install ufw firewall
+###################################
+ sudo apt update
+ sudo apt install ufw
+ sudo ufw allow ssh  ### to allow ssh
+ sudo ufw allow vnc  ### to allow vnc
+ sudo ufw status numbered ### numbered adds the number of the rule which can be used to delete the rule
+ sudo ufw delete 4 ### deletes rule numbered 4
+ sudo ufw status verbose ### shows the default rules too
+
+###################################
+###STEP: FreeCAD install with Flatpack
+###################################
+ sudo apt update
+ sudo apt install -y flatpak
+ sudo flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repflathub.flatpakrepo
+
+### MAKER
+ sudo flatpak install -y --system flathub org.freecad.FreeCAD  ### CAD/CAM 2D 3D
+ sudo flatpak install -y flathub org.gimp.GIMP                 ### GNU Image Manipulation
+
+### PHOTO GRAPHIC
+ sudo flatpak install -y flathub org.darktable.Darktable       ### Photo Manipulation
+ sudo flatpak install -y flathub org.inkscape.Inkscape         ### Vector 
+
+### AUDIO
+ sudo flatpak install -y flathub org.hydrogenmusic.Hydrogen    ### Drum Kit Machine 
+ sudo flatpak install -y flathub org.mixxx.Mixxx               ### DJ Mix
+ sudo flatpak install -y flathub org.rncbc.qsynth              ### Fluid Synth
+ sudo flatpak install -y flathub org.guitarix.Guitarix         ### Guitar Amps
+ sudo flatpak install -y flathub fm.reaper.Reaper              ### DAW Digital Audio Workshop
+ sudo flatpak install -y flathub org.audacityteam.Audacity     ### Audio edit & recording
+
+### SCIENCE
+ sudo flatpak install -y flathub org.stellarium.Stellarium     ### Star Planettarium
+  
+### CONNECT
+ sudo flatpak install -y flathub org.telegram.desktop          ### Text Messaging
+  
+  
+# to run or go to the "Graphics" tab after reboot
+
+ flatpak run org.freecad.FreeCAD
+
+# flatpack management
+
+# List installed flatpaks
+flatpak list
+
+# List all available applications
+flatpak remote-ls flathub --app
+
+# Update just flatpaks
+flatpak update
+
+###################################
+###STEP: Install Audio Apps
+###################################
+ apt install jackd2 qjackctl qsynth guitarix sox ### General Apps
+ apt install tuxguitar-alsa tuxguitar-fluidsynth tuxguitar-jack tuxguitar-synth-lv2 tuxguitar  ### TuxGuitar
+ apt install hydrogen hydrogen-drumkits-effects hydrogen-drumkits hydrogen-doc hydrogen-data  ### DrumKit  
+ apt install k3b tk k3b-i18n sox cdrskin k3b-extrathemes  normalize-audio   ### CD burning
+ apt install yoshimi  ### synth
+
+###################################
+###STEP: RTL SDR Software Define Radio
+###################################
+
+ apt install rtl-sdr rtl-433 rtl-ais icecast2
+ apt install ices2 uhd-host cmake ices2 libusb-1.0-0-dev
+ apt install gqrx-sdr
+
+# create the following file to blacklist the default DTV drivers from installing
+ sudo nano /etc/modprobe.d/blacklist-rtl.conf
+
+Add these lines and save (Ctrl+X, Y, Enter):
+
+blacklist dvb_usb_rtl28xxu
+blacklist rtl2832
+blacklist rtl2830
+
+ reboot
+
+ rtl_test -t  ### to see your device
+ gqrx ### to start listening
+
+###################################
+###STEP: Userid management
+###################################
+ sudo su ### do the following as root
+ adduser soroka ### creates a new userid "soroka" and home dir, you will be prompted for the password and full name
+ usermod -aG cnc soroka ### adds the userid soroka to the cnc group at allow linuxcnc operations
+ usermod -aG sudo soroka ### allows the new user to execute (sudo) system (root) commands
+ passwd cnc ### change the password of the userid cnc, you will be prompted for the new password
+
+###################################
+###STEP: Mount an extra NVME disk (just using the disk to listen to music with VLC while I configure the PI and write this doc...) 
+###################################
+ lsblk ### to look for your new disk
+ sudo mkdir -p /mnt/nvme  ### such that "nvme" is the name of your new disk
+ sudo mount /dev/nvme0n1p2 /mnt/nvme ### test the mount, this will mount the disk for this boot session only
+                                ### note: all disks start with /dev and nvme0n1p2 is what you found from lsblk
+### Make the disk you mounted above presistent across boots
+ lsblk -f ### and find the "UUID" of the disk also note the "FSTYPE" which i ext4 in this example 
+ sudo vi /etc/fstab ### edit the fstab file and add the following at the bottom to make the mount presistent 
+   
+UUID=f6bb7216-cc28-4ec3-86d6-b391f5f31405	/mnt/nvme	ext4 	defaults
+
+###################################
+###STEP: Networking adding an extra interface for LinuxCNC
+###################################
+### add an extra USB to 1g Ethernet converter to the blue USB connector. blue = USB-3 so faster then the USB-2 to the right
+ lsusb ### will check that the USB Ethernet is reconized by the PI
+ lsusb -v ### for a more verbose listing
+ ip a ### lists all the network interfaces, mac addresses, ip addresses... eth0 is the onboard, eth1 will be the new interface
+      ### wlan is the wifi interface
+ ### The default IP address for the Mesa 7i96 is either 10.10.10.10 or 192.168.1.121 depending on it's jumper configurations
+ ### I'm choosing the jumpers to set the Mesa to 10.10.10.10 so I'm going to set my extra (eth1) IP address to 10.10.10.1  
+ ### So edit the file "/etc/network/interfaces" and add the following after the eth0 setction:
+
+###EXAMPLE:
+auto eth1
+iface eth1 inet static
+    address 10.10.10.1
+    netmask 255.255.255.0
+###EXAMPLE_END:
+
+ sudo su
+ vi /etc/network/interfaces ### to edit and add the above into the file
+ systemctl restart networking ### to restart the network
+
+
+ ip a ### will show that eth1 has been set to 10.10.10.1
+ ping 10.10.10.10 ### connect the ethernet cable to the Mesa 7i96 and power it on and the ping will respond <CTRL>C to stop the ping
+###EXAMPLE:
+ ping 10.10.10.10
+PING 10.10.10.10 (10.10.10.10) 56(84) bytes of data.
+64 bytes from 10.10.10.10: icmp_seq=1 ttl=64 time=0.314 ms
+64 bytes from 10.10.10.10: icmp_seq=2 ttl=64 time=0.317 ms
+64 bytes from 10.10.10.10: icmp_seq=3 ttl=64 time=0.344 ms
+64 bytes from 10.10.10.10: icmp_seq=4 ttl=64 time=0.315 ms
+64 bytes from 10.10.10.10: icmp_seq=5 ttl=64 time=0.319 ms
+64 bytes from 10.10.10.10: icmp_seq=6 ttl=64 time=0.312 ms
+^C
+###EXAMPLE_END:
+
+
+### the following is what your /etc/network/interfaces file should look like:
+
+
+###EXAMPLE:
+ cat interfaces
+# Interfaces
+source /etc/network/interfaces.d/*
+
+# Loopback network interface
+auto lo
+iface lo inet loopback
+
+# Ethernet
+allow-hotplug eth0
+iface eth0 inet dhcp
+	#address 10.0.0.10
+	#netmask 255.255.255.0
+	#gateway 10.0.0.1
+	#dns-nameservers 8.8.8.8 8.8.4.4
+
+auto eth1
+iface eth1 inet static
+    address 10.10.10.1
+    netmask 255.255.255.0
+
+# Mobile tether
+#allow-hotplug usb0
+#iface usb0 inet dhcp
+
+# Wireless
+allow-hotplug wlan0
+iface wlan0 inet dhcp
+	wireless-power off
+	#address 10.0.0.10
+	#netmask 255.255.255.0
+	#gateway 10.0.0.1
+	#dns-nameservers 8.8.8.8 8.8.4.4
+	wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
+###EXAMPLE_END:
+
+#######################################
+###STEP: enable HiFiBerry Sound card
+#######################################
+# edit the /boot/firmware/config.txt file and make the following changed to disable the onboard sound card and enable hifiberry
+
+ vi /boot/firmware/config.txt
+
+###EXAMPLE:
+
+# enable audio (loads snd_bcm2835)
+# dtparam=audio=on
+
+# enable HiFiBerry audio
+ dtparam=audio=off
+ force_eeprom_read=0
+# dtoverlay=hifiberry-dacplus-pro 
+ dtoverlay=hifiberry-dacplusadc-pro 
+
+###EXAMPLE_END:
+
+ # then reboot to load the hifiberry driver
+
+ sudo reboot
+
+###############################################################################
+###        END of FILE
+###############################################################################

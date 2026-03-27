@@ -1,0 +1,860 @@
+useradd soroka -d /home/soroka -m -s /bin/bash
+
+
+apt install xrdp
+
+
+apt install -y \
+     apt-transport-https \
+     ca-certificates \
+     curl \
+     gnupg2 \
+     software-properties-common
+
+
+
+
+# Get the Docker signing key for packages
+curl -fsSL https://download.docker.com/linux/$(. /etc/os-release; echo "$ID")/gpg | sudo apt-key add -
+
+# Add the Docker official repos
+echo "deb [arch=armhf] https://download.docker.com/linux/$(. /etc/os-release; echo "$ID") \
+     $(lsb_release -cs) stable" | \
+    sudo tee /etc/apt/sources.list.d/docker.list
+
+# Install Docker
+# The aufs package, part of the "recommended" packages, won't install on Buster just yet, because of missing pre-compiled kernel modules.
+# We can work around that issue by using "--no-install-recommends"
+sudo apt update
+sudo apt install -y --no-install-recommends \
+    docker-ce \
+    cgroupfs-mount
+
+sudo systemctl enable docker
+sudo systemctl start docker
+sudo usermod -aG docker pi
+docker --version
+sudo docker run --rm arm32v7/hello-world
+
+
+# Install required packages
+sudo apt update
+sudo apt install -y python python-pip libffi-dev python-backports.ssl-match-hostname
+
+sudo apt install golang-docker-credential-helpers python3-cached-property python3-docker
+  python3-dockerpty python3-dockerpycreds python3-docopt python3-jsonschema
+  python3-texttable python3-websocket python3-yaml
+
+ sudo apt install git
+  pip install --upgrade pip
+
+ sudo apt install docker-compose
+
+
+## as userid pi run not sure this worked maybe just use the apt install docker-compose
+  mkdir -p /home/pi/git;
+  cd /home/pi/git;
+  git clone https://github.com/docker/compose.git;
+  cd compose;
+  git checkout release;   
+  cp -i Dockerfile Dockerfile.armhf;
+  sed -i -e 's/^FROM debian\:/FROM armhf\/debian:/' Dockerfile.armhf;
+  sed -i -e 's/x86_64/armle/g' Dockerfile.armhf;
+  docker build -t docker-compose:armhf -f Dockerfile.armhf .;
+  docker run --rm --entrypoint="script/build/linux-entrypoint" -v $(pwd)/dist:/code/dist -v $(pwd)/.git:/code/.git "docker-compose:armhf";
+
+
+
+docker-compose --version 
+
+reboot ### then check the versions of docker and docker-compose
+
+
+## the version should be the following or newer:
+# docker --version
+# Docker version 19.03.12, build 48a6621
+
+# docker-compose --version
+docker-compose version
+docker-compose version 1.21.0, build unknown
+docker-py version: 3.4.1
+CPython version: 3.7.3
+OpenSSL version: OpenSSL 1.1.1d  10 Sep 2019
+
+
+
+sudo mkdir /opt
+sudo chown pi:pi /opt
+cd /opt
+mkdir dockermon
+mkdir grafana
+mkdir homeassistant
+mkdir influxdb
+mkdir mosquitto
+mkdir mqtt-bridge
+mkdir node-red
+mkdir organizr
+mkdir portainer
+
+
+
+### get the yaml and put it in /opt
+
+/opt/docker-compose.yaml
+
+https://gist.github.com/x99percent/d65b6f1ae4abfd64c2e1d6fffd3db371
+
+ from the above link do a "Download Zip"
+
+then
+
+  cd /home/pi/Downloads
+  unzip d65b6f1ae4abfd64c2e1d6fffd3db371-3b9982a987b69252b0b2b6480896e2e25b0ab5e1.zip
+  cd  d65b6f1ae4abfd64c2e1d6fffd3db371-3b9982a987b69252b0b2b6480896e2e25b0ab5e1
+  mv docker-compose.yaml /opt/.
+
+  vi /opt/docker-compose.yaml 
+           ### remove the following section from the docker-compose.yaml file
+           ### it's only needed if you are running on USB sticks
+   devices:
+      - /dev/ttyUSB0:/dev/ttyUSB0:rwm
+      - /dev/ttyUSB1:/dev/ttyUSB1:rwm
+
+
+### get the docker containers
+
+ cd /opt
+ docker-compose pull
+ docker-compose build
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+https://www.reddit.com/r/homeassistant/comments/895iw6/my_home_assistant_setup_rpi_3b_docker_compose/
+
+
+
+
+
+Posted byu/x99percent
+2 years ago
+Gold2
+My Home Assistant setup: RPi 3B, Docker Compose, Node-RED, SSL, client certs, etc...
+Update on 25/11/2018 - Changed Grafana image to proxx/grafana-armv7
+
+Update on 31/10/2018 - Changed instructions to use "node-red-contrib-home-assistant-websocket" in Node-RED and Long-Lived Access Tokens in Home Assistant, along with the new Home Assistant Auth Provider.
+
+ 
+Decided to make a post to try and help people out with getting everything to work, because so much of this information is scattered and/or obsolete. This post will be a work in progress with more info added as time goes on.
+
+ 
+After using SmartThings for a while and seeing the effects of a few outages, I realized that a home automation solution that was so dependent on the cloud might not be the best long-term solution. Home Assistant seemed like a good fix for that problem. So, I've been slowly migrating my devices over to HA from ST, all while taking a self-taught crash course in Linux, Docker, certificates... you name it!
+
+ 
+I decided to go with a Docker setup as I felt it offered more flexibility than a Hass.io install. Plus, when I originally tried Hass.io it really wasn't there quite yet. This setup also allows me to easily backup my settings and config files using git. I can go from a fresh RPi3 to fully back up and running in an hour, maybe less.
+
+ 
+Scope:
+For people with a Raspberry Pi that want a functional Home Assistant setup with Docker. I'm using a Raspberry Pi 3B with Raspbian Stretch Lite.
+
+ 
+Prequisites:
+
+Internet access (duh).
+
+THE DESIRE TO USE STRONG PASSWORDS. This should go without saying...
+
+Use a fixed IP on your Pi for your local network, either statically assigned or with a DHCP reservation.
+
+The know-how to forward ports on your firewall/router. Use your device's documentation and Google-Fu.
+
+use a fast microSD card in your Pi! It is absolutely worth it. I'm using a 32GB Sandisk Extreme Plus... currently ~25$US retail.
+
+ 
+ 
+
+WHAT IS DOCKER?
+Docker allows you to use pre-made images that you run in containers. Think of the image as being the application, and the container as your "installed" version of that application. These containers can be started, stopped, and restarted like little virtual machines... but without all of the extra VM baggage.
+
+ 
+ 
+
+INSTALLING THE LATEST DOCKER
+I used the "convenience script" to install Docker CE.
+
+pi@RPi3:/ $ cd
+pi@RPi3:~ $ curl -fsSL get.docker.com -o get-docker.sh
+pi@RPi3:~ $ sudo sh get-docker.sh
+[magic happens]
+pi@RPi3:~ $ sudo usermod -aG docker pi
+[This adds the user "pi" to the group "docker". Log out and back in for this to take effect.]
+pi@RPi3:~ $ docker --version
+Docker version 18.06.0-ce, build 0520e24
+ 
+After getting Docker installed, I manually created containers from images available on hub.docker.com with commands like this (GROSS. DO NOT DO THIS.):
+
+docker run -d --name influxdb --restart unless-stopped -p 8086:8086 -v /opt/influxdb/influxdb.conf:/etc/influxdb/influxdb.conf:ro -v influxdb_data:/var/lib/influxdb influxdb -config /etc/influxdb/influxdb.conf
+ 
+It got really old trying to manually deal with multiple containers and the trial and error of starting them up in the proper order. Because of this, I started to look towards using Docker Compose.
+
+ 
+ 
+
+WHAT IS DOCKER COMPOSE?
+Docker Compose allows you to create a single file that dictates the configuration, dependencies, and startup order of multiple Docker containers. IT IS AMAZING. So, instead of typing crap like this:
+
+pi@RPi3:~ $ docker start influxdb
+influxdb
+pi@RPi3:~ $ docker start homeassistant
+homeassistant
+pi@RPi3:~ $ docker start node-red
+node-red
+ 
+...you get to just type:
+
+pi@RPi3:/opt $ docker-compose up -d
+ 
+BOOM. DONE. (notice the different directory... this will come up later)
+
+ 
+ 
+
+INSTALLING THE LATEST DOCKER COMPOSE
+pi@RPi3:~ $ sudo apt-get install python-pip
+pi@RPi3:~ $ sudo pip install docker-compose
+[magic happens]
+pi@RPi3:~ $ docker-compose --version
+docker-compose version 1.20.1, build 5d8c71b
+ 
+ 
+
+PREPARE FOR TAKEOFF
+pi@RPi3:~ $ sudo mkdir /opt
+pi@RPi3:~ $ sudo chown pi:pi /opt
+[change the owner of /opt to pi]
+pi@RPi3:~ $ cd /opt
+pi@RPi3:/opt $ mkdir dockermon
+pi@RPi3:/opt $ mkdir grafana
+pi@RPi3:/opt $ mkdir homeassistant
+pi@RPi3:/opt $ mkdir influxdb
+pi@RPi3:/opt $ mkdir mosquitto
+pi@RPi3:/opt $ mkdir mqtt-bridge
+pi@RPi3:/opt $ mkdir node-red
+pi@RPi3:/opt $ mkdir organizr
+pi@RPi3:/opt $ mkdir portainer
+ 
+These are the directories for all of the apps... err... Docker containers that we'll be running. These directories will store the persistent data/configs for the apps, so that even if the a container is destroyed, we will still be able to run a new one and everything still works (e.g., firing up a new HA version). This /opt directory is what you will want to back up.
+
+Dockermon - Allows you to start/stop/restart Docker containers with an http request. Probably best for internal use only.
+
+Grafana - Make pretty graphs of your data. It pulls from InfluxDB. Only needed if this stuff interests you.
+
+Home Assistant - duh.
+
+InfluxDB - Database to keep stats/states from HA. Only needed if this stuff interests you.
+
+Mosquitto - MQTT broker. I found the broker built-in to HA to be sub-par.
+
+MQTT-Bridge - needed along with the matching SmartApp to communicate with SmartThings. Skip if you're not using SmartThings.
+
+Node-RED - Graphical scripting. YES.
+
+Organizr - Allows you to organize (ha!) your web interfaces into one page with "tabs". Also includes Nginx, which is used as a reverse proxy to handle dealing with client certs and SSL (https).
+
+Portainer - GUI to manage Docker containers and images. A Docker container to manage your Docker containers.
+
+ 
+Covering the initial startup and configuration of ALL of these is going to take some time, so please bear with me.
+
+Here is the docker-compose.yaml that I am using. You can remove sections that do not apply to or interest you (e.g., Grafana, InfluxDB, MQTT-Bridge). If you do remove InfluxDB, make sure you also remove the two lines under the HA section that set up InfluxDB as a dependency.
+
+ 
+/opt/docker-compose.yaml
+
+https://gist.github.com/x99percent/d65b6f1ae4abfd64c2e1d6fffd3db371
+
+ 
+Make adjustments to the docker-compose.yaml file as needed. For example, I have a USB stick that handles both Z-Wave and Zigbee, so that's why I have the "devices:" section in the homeassistant block. If you don't have a device like that, remove that section.
+
+Let's get the images/built pulled for all of these soon-to-be containers. Remove the MQTT-Bridge section from docker-compose.yaml if you are not using it, since that image needs to be built on your Pi. This is a long process that can take some time, especially if you have a slow microSD card.
+
+pi@RPi3:/opt $ docker-compose pull
+[ LOTS of data is downloaded ]
+ 
+Skip if not using MQTT-Bridge for SmartThings:
+
+pi@RPi3:/opt $ docker-compose build
+[ more downloading, more magic, an image named opt_mqtt-bridge is generated ]
+ 
+Now that we have all of our images, let's start configuring them one at a time.
+
+ 
+ 
+
+InfluxDB
+To make InfluxDB work with HA, it needs to have a database pre-made. But before that, we need a configuration file for InfluxDB. Most images will automatically create a config if none exists (e.g., Home Assistant), but InfluxDB needs a little help.
+
+pi@RPi3:/opt $ docker run --rm influxdb influxd config > /opt/influxdb/influxdb.conf
+  This runs the image "influxdb" as a new unnamed container, passes the command "influxd config", dumps the output to our new config file, and then removes the container because of the "--rm".
+
+Let's create the database that Home Assistant can use for extreme datalogging:
+
+If you want to password-protect your database:
+
+pi@RPi3:/opt $ docker run --rm -v /opt/influxdb/influxdb.conf:/etc/influxdb/influxdb.conf -v /opt/influxdb:/var/lib/influxdb -e INFLUXDB_DB=homeassistant -e INFLUXDB_ADMIN_USER=admin -e INFLUXDB_ADMIN_PASSWORD=SuperStrongPasswordGoesHere influxdb -config /etc/influxdb/influxdb.conf /init-influxdb.sh
+ 
+If you do not want to password-protect your database:
+
+pi@RPi3:/opt $ docker run --rm -v /opt/influxdb/influxdb.conf:/etc/influxdb/influxdb.conf -v /opt/influxdb:/var/lib/influxdb -e INFLUXDB_DB=homeassistant influxdb -config /etc/influxdb/influxdb.conf /init-influxdb.sh
+ 
+With whichever command you choose, you should see a bunch of output, including the creation of the database. When the output stops, press Control-C to exit out of this temporary container.
+
+At this point, you can fire up InfluxDB on its own with:
+
+pi@RPi3:/opt $ docker-compose up -d influxdb
+ 
+ 
+
+Mosquitto
+Dump this in into /opt/mosquitto/mosquitto.conf:
+
+persistence true
+persistence_location /mosquitto/data/
+
+allow_anonymous true
+
+# Port to use for the default listener.
+port 1883
+
+log_dest stdout
+
+#listener 9001
+#protocol websockets
+ 
+With the config done, you can fire up Mosquitto with:
+
+pi@RPi3:/opt $ docker-compose up -d mosquitto
+ 
+If you want to secure Mosquitto, modify the config file with this:
+
+allow_anonymous false
+password_file /mosquitto/data/passwd
+ 
+Create your password file:
+
+pi@RPi3:/opt $ cd mosquitto
+pi@RPi3:/opt/mosquitto $ touch passwd
+ 
+We have to actually install Mosquitto... because, for some silly reason, the official Mosquitto docker image does not include the "mosquitto_passwd" command. We also need to disable the service, so it doesn't run automatically
+
+pi@RPi3:/opt/mosquitto $ sudo apt-get install mosquitto -y
+pi@RPi3:/opt/mosquitto $ sudo systemctl disable mosquitto.service
+ 
+Create the username/password pair(s) in the file. Repeat the mosquitto_passwd command as needed. Don't freak out if the console does some weird line-wrapping as you type or paste that command.
+
+pi@RPi3:/opt/mosquitto $ mosquitto_passwd -b passwd USERNAME PASSWORD
+pi@RPi3:/opt/mosquitto $ docker restart mosquitto
+ 
+ 
+
+Home Assistant
+Now that we've got the two services running that Home Assistant depends on, we can fire up HA. If you've already been running HA, you can put your existing configuration into /opt/homeassistant. Making everything work again is a bit outside the scope of this post, but I'll try to help people figure out issues if I can.
+
+If you're wanting to connect HA to InfluxDB, add this to your HA's configuration.yaml:
+
+influxdb:
+  host: 127.0.0.1
+  port: 8086
+# uncomment if you used a password
+#  username: admin  
+#  password: !secret influxdb_password
+  database: homeassistant
+  default_measurement: state
+# exclude stuff that is pointless to log
+  exclude: 
+    domains:
+      - group 
+    entities:
+      - sensor.other_junk_you_dont_care_about
+ 
+Older versions of this post recommended the use of the "api_password:" setting in the "http:" section of your configuration file. This is the OLD method to authenticate (one password for everything). The latest method uses the new "Home Assistant Auth Provider"
+
+homeassistant:
+  auth_providers:
+    - type: homeassistant
+ 
+With this in your configuration.yaml file, you'll be able to create individual users and "Long-Lived Access Tokens" to connect other apps, like Node-RED.
+
+ 
+Home Assistant can be fired up with:
+
+pi@RPi3:/opt $ docker-compose up -d homeassistant
+ 
+After it finishes starting, you should now be able to access your HA instance locally from http://YOUR.PI.IP.ADDRESS:8123
+
+If this is the first time you've run Home Assistant, you will be prompted to create an account (provided that you're NOT using "api_password").
+
+ 
+ 
+
+MQTT-Bridge for SmartThings
+Upvote if you're here to move away from SmartThings! ;-)
+
+We built the image earlier, so you should be able to start the MQTT-Bridge with:
+
+pi@RPi3:/opt $ docker-compose up -d mqtt-bridge
+ 
+Doing that made it generate a config file, and we need to edit that file. In /opt/mqtt-bridge/config.yml change the "host:" line to...
+
+    host: YOUR.PI.IP.ADDRESS
+ 
+If you chose to secure your Mosquitto setup, you'll also need to make sure that's covered in the config.yaml here...
+
+    username: USERNAME
+    password: PASSWORD
+ 
+Since we've modified the configuration, restart the container.
+
+pi@RPi3:/opt $ docker restart mqtt-bridge
+ 
+The rest of the configuration for this component is on the SmartThings side.
+Reference: https://github.com/stjohnjohnson/smartthings-mqtt-bridge
+
+ 
+ 
+
+Portainer
+Start Portainer for the first time with:
+
+pi@RPi3:/opt $ docker-compose up -d portainer
+ 
+In a few seconds, you should be able to access Portainer locally from http://YOUR.PI.IP.ADDRESS:9000
+
+Pick a strong password for the admin user, then select "Local" and hit the connect button. Portainer allows you to see/manage your Docker containers and images in a pretty GUI.
+
+ 
+ 
+
+Node-RED
+Like before, let's start the container:
+
+pi@RPi3:/opt $ docker-compose up -d node-red
+ 
+Node-RED should be accessible from http://YOUR.PI.IP.ADDRESS:1880
+
+Securing Node-RED takes a few steps, but we'll get through it.
+
+Inside /opt/node-red/settings.js you'll find this section:
+
+    // Securing Node-RED
+    // -----------------
+    // To password protect the Node-RED editor and admin API, the following
+    // property can be used. See http://nodered.org/docs/security.html for details.
+    //adminAuth: {
+    //    type: "credentials",
+    //    users: [{
+    //        username: "admin",
+    //        password: "$2a$08$zZWtXTja0fB1pzD4sHCMyOCMYz2Z6dNbM6tl8sJogENOMcxWV9DN.",
+    //        permissions: "*"
+    //    }]
+    //},
+ 
+We need to generate our own hash to replace the default one shown here. Let's open a shell in the Node-RED container and run the commands to make that happen.
+(Reference: https://nodered.org/docs/security)
+
+pi@RPi3:/opt $ docker exec -it node-red /bin/bash
+node-red@e72982e6bde5:~$ node -e "console.log(require('bcryptjs').hashSync(process.argv[1], 8));" YOURPASSWORD
+$2a$08$mUnOBSbzTTldQwzaD0cA4OMFhBXuzdDc3O819sxZTPzdWikyBkvP6
+node-red@e72982e6bde5:~$ exit
+ 
+That is literally the hash for "YOURPASSWORD". Don't use it. ;-)
+
+ 
+Edit /opt/node-red/settings.js so that it looks like this, with your new hash:
+
+    // Securing Node-RED
+    // -----------------
+    // To password protect the Node-RED editor and admin API, the following
+    // property can be used. See http://nodered.org/docs/security.html for details.
+    adminAuth: {
+        type: "credentials",
+        users: [{
+            username: "admin",
+            password: "$2a$08$mUnOBSbzTTldQwzaD0cA4OMFhBXuzdDc3O819sxZTPzdWikyBkvP6",
+            permissions: "*"
+        }]
+    },
+  Save the file, and restart Node-RED.
+
+pi@RPi3:/opt $ docker restart node-red
+  When you reload http://YOUR.PI.IP.ADDRESS:1880, you should be prompted for a username and password.
+
+ 
+ 
+
+Connecting Node-RED to Home Assistant
+ 
+Connecting Node-RED to HA is as easy as loading the proper modules into Node-RED.
+
+On the Node-RED webpage, click the hamburger button in the upper-right corner and select "Manage palette".
+
+Click the "Install" tab
+
+Where it says "search modules", enter "home-assistant"
+
+You want the one that says "node-red-contrib-home-assistant-websocket", currently at version 0.1.3
+
+Click the install button
+
+Click the install button on the warning that pops up
+
+ 
+When you see a green box pop up, listing the new nodes that are added to the palette, it's done installing.
+
+ 
+The first time you try to use the Home Assistant nodes, there will be errors. This is normal. Errors will be thrown and HA entity names will not show up automatically until the nodes are properly configured (pointing at your HA install with http://YOUR.PI.IP.ADDRESS:8123 and a Long-Lived Access Token) AND you hit "Deploy" at the upper-right.
+
+ 
+You get a Long-Lived Access Token from Home Assistant by clicking on the round Profile button in the upper left of the HA interface. If the username you created in HA is "Bob", you should see a circle around a "B". Click that.
+
+ 
+At the bottom of the profile page, you'll see an option to create a Long-Lived Access Token. Give it a meaningful name, like "Node-RED", and copy the text of the token. Paste this text into the "Edit server node" section of Node-RED, where it says "Access Token".
+
+ 
+Use of Node-RED for HA automation is for another discussion, but at least now you can get started. :-)
+
+ 
+ 
+Let's move on to getting this stuff secured and online.
+
+ 
+ 
+
+Dynamic DNS... in this case, DuckDNS
+Go to https://www.duckdns.org and sign up for an account. Pick a unique subdomain name. Once you have one, check out the install link at the top of the page (eventually landing at https://www.duckdns.org/install.jsp?tab=pi&domain=YOURDOMAIN ), or follow along here. Using their webpage will fill in the YOURDOMAIN and YOURTOKEN for you.
+
+pi@RPi3:/opt $ mkdir duckdns
+pi@RPi3:/opt $ cd duckdns
+pi@RPi3:/opt/duckdns $
+ 
+Put this into /opt/duckdns/duck.sh
+
+echo url="https://www.duckdns.org/update?domains=YOURDOMAIN&token=YOURTOKEN&ip=" | curl -k -o /opt/duckdns/duck.log -K -
+ 
+Next:
+
+pi@RPi3:/opt/duckdns $ chmod 700 duck.sh
+pi@RPi3:/opt/duckdns $ crontab -e
+ 
+Put this at the end of the crontab file:
+
+*/5 * * * * /opt/duckdns/duck.sh >/dev/null 2>&1
+ 
+Save the file (Control+O, then Control+X), then test the script.
+
+pi@RPi3:/opt/duckdns $ ./duck.sh
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100     2    0     2    0     0      3      0 --:--:-- --:--:-- --:--:--     3
+pi@RPi3:/opt/duckdns $ cat duck.log
+OK
+ 
+If you don't see "OK", check your work and try again. Setting up DuckDNS this way, and not within Home Assistant makes it so that your dynamic DNS doesn't rely on HA to work.
+
+ 
+ 
+
+Port-forwarding
+You will need to forward ports 80 and 443 on your firewall. Both ports should be pointed at the fixed IP of your Raspberry Pi.
+
+With all of the different routers, firewalls, etc. out there, this part is on you.
+
+ 
+ 
+
+SSL with Cerbot and Let's Encrypt
+This will be very similar to the setup outlined in the official HA docs.
+
+pi@RPi3:~ $ wget https://dl.eff.org/certbot-auto
+pi@RPi3:~ $ chmod 755 certbot-auto
+pi@RPi3:~ $ ./certbot-auto certonly --standalone --preferred-challenges http-01 --email your@email.address -d YOURDOMAIN.duckdns.org
+ 
+Now, I want to use my main domain (YOURDOMAIN.duckdns.org) to reach my Organizr interface, and I'll use another subdomain to reach HA... so I'll do this to get another certificate for that:
+
+pi@RPi3:~ $ ./certbot-auto certonly --standalone --preferred-challenges http-01 --email your@email.address -d ha.YOURDOMAIN.duckdns.org
+ 
+This same ha.YOURDOMAIN.duckdns.org should be entered into your HA's configuration.yaml file as the "base_url:" in the "http:" section. Example:
+
+  base_url: ha.YOURDOMAIN.duckdns.org
+ 
+While we're at it, let's make a cert for Node-RED and the Portainer tool as well.
+
+pi@RPi3:~ $ ./certbot-auto certonly --standalone --preferred-challenges http-01 --email your@email.address -d nodered.YOURDOMAIN.duckdns.org
+pi@RPi3:~ $ ./certbot-auto certonly --standalone --preferred-challenges http-01 --email your@email.address -d portainer.YOURDOMAIN.duckdns.org
+ 
+There is a case to use one certificate for everything, but that means all of your previously obscured subdomains will be "revealed" to the outside world in just one certificate. Once you start using client certs, they will still be VERY secure, but why bother advertising the name at all?
+
+ 
+Note: if you get any error about port 80, either your port-forwarding isn't set up properly, or you have something else running on port 80 on your Pi. Later on, if/when you want to add more certificates, remember to stop Organizr.
+
+ 
+Provided that you used a valid email address, you'll get an email notification when your certificates are about to expire. You can renew them with this command while everything is up and running:
+
+pi@RPi3:~ $ ./certbot-auto renew
+ 
+This command can be automated, if you'd like. Running it once a day is more than enough to get the job done.
+
+ 
+ 
+
+Organizr
+Organizr will be the glue that ties everything together. It's based around Nginx, which (from what I understand) is a webserver that can be used as a reverse-proxy to securely reach all of our running services from the outside world.
+
+On the first run, Organizr will automatically create the configuration files that we're going to mess with.
+
+pi@RPi3:/opt $ docker-compose up -d organizr
+ 
+The one we are interested in is /opt/organizr/nginx/site-confs/default
+
+Replace the entire contents of that file with this, adjusting for YOURDOMAIN and YOUR.PI.IP.ADDRESS :
+
+https://gist.github.com/x99percent/98d7554191c838246957cfc8bc811cad
+
+ 
+Also edit /opt/organizr/nginx/nginx.conf and uncomment line 23 (thanks to /u/romulcah):
+
+        server_names_hash_bucket_size 64;
+ 
+Restart Organizr to apply the changes...
+
+pi@RPi3:/opt $ docker restart organizr
+ 
+...and, after a few seconds, you should now be able to go to http://ha.YOURDOMAIN.duckdns.org , which should automatically redirect to https. This also applies to:
+
+http://YOURDOMAIN.duckdns.org for Organizr
+
+http://portainer.YOURDOMAIN.duckdns.org
+
+http://nodered.YOURDOMAIN.duckdns.org
+
+All should redirect to https and be functional.
+
+ 
+ 
+
+Two containers left: Grafana and Dockermon
+Grafana needs a config file present to fire up without throwing errors. (Thanks to /u/rubyan)
+
+pi@RPi3:/opt $ touch /opt/grafana/grafana.ini
+ 
+At this point, you can fire up the remaining two containters with:
+
+pi@RPi3:/opt $ docker-compose up -d
+ 
+In the future, this is the command that you will use to start everything, unless you want to just reboot and have everything restart automatically (see next section).
+
+ 
+Remember to change the password in Grafana (default username and password is "admin").
+
+ 
+If you want to access Grafana from the Internet, go through the same steps as earlier... add a Grafana section to /opt/organizr/nginx/site-conf/default, request a certificate with Certbot (while Organizr is stopped), etc. Since you're an expert at this stuff now, you can probably figure it out. ;-)
+
+ 
+With Dockermon, you can do things like this:
+
+https://philhawthorne.com/ha-dockermon-use-home-assistant-to-monitor-start-or-stop-docker-containers/
+
+Node Red Watchdog: https://www.youtube.com/watch?v=0iGq3izVklY - only your "Action" will be a call to a shell_command.
+
+In your HA config:
+
+shell_command:
+  node_red_restart: curl http://127.0.0.1:8126/container/node-red/restart
+ 
+ 
+
+LET'S MAKE DOCKER COMPOSE RUN AUTOMATICALLY ON BOOT
+To create this file, you'll need to use "sudo".
+
+pi@RPi3:/opt $ cd /etc/systemd/system
+pi@RPi3:/etc/systemd/system $ sudo nano docker-compose-opt.service
+ 
+Paste this in the file:
+
+# /etc/systemd/system/docker-compose-opt.service
+
+[Unit]
+Description=Docker Compose Opt Service
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+WorkingDirectory=/opt
+ExecStart=/usr/local/bin/docker-compose up -d
+ExecStop=/usr/local/bin/docker-compose stop
+TimeoutStartSec=0
+
+[Install]
+WantedBy=multi-user.target
+ 
+Let's enable our new service.
+
+pi@RPi3:/etc/systemd/system $ sudo systemctl enable docker-compose-opt
+ 
+The service is now enabled, but not running... let's test it out by stopping and removing our containers manually, then rebooting.
+
+pi@RPi3:/etc/systemd/system $ cd /opt
+pi@RPi3:/opt $ docker-compose down
+[containers are stopped and removed]
+pi@RPi3:/opt $ sudo reboot
+ 
+Once you log back in, you can check the status of your containers with Portainer or from the shell:
+
+pi@RPi3:~ $ docker ps
+ 
+Depending on how fast you and/or your system are, you will see the containers come up over the first few minutes after a boot. If you keep running "docker ps" you will eventually get something that looks like this (notice the "healthy" bits):
+
+pi@RPi3:~ $ docker ps
+CONTAINER ID        IMAGE                                             COMMAND                  CREATED             STATUS                    PORTS                                      NAMES
+774c92e410cf        nodered/node-red-docker:rpi-v8                    "/usr/bin/entry.sh n…"   35 seconds ago      Up 30 seconds (healthy)   0.0.0.0:1880->1880/tcp                     node-red
+80671b8ca124        opt_mqtt-bridge                                   "npm start"              40 seconds ago      Up 34 seconds             0.0.0.0:8080->8080/tcp                     mqtt-bridge
+2ff18fb019b6        proxx/grafana-armv7                               "/run.sh"                2 minutes ago       Up 2 minutes              0.0.0.0:3000->3000/tcp                     grafana
+a5c1726c2803        homeassistant/raspberrypi3-homeassistant:0.66.1   "/usr/bin/entry.sh p…"   2 minutes ago       Up 2 minutes (healthy)                                               homeassistant
+5c419817d092        influxdb                                          "/entrypoint.sh infl…"   3 minutes ago       Up 3 minutes (healthy)    0.0.0.0:8086->8086/tcp                     influxdb
+4897a2708885        tribunex/ha-dockermon-pi                          "/bin/sh -c 'npm sta…"   3 minutes ago       Up 3 minutes              0.0.0.0:8126->8126/tcp                     dockermon
+86ddacfa9133        robotany/mosquitto-rpi                            "/docker-entrypoint.…"   3 minutes ago       Up 3 minutes              0.0.0.0:1883->1883/tcp                     mosquitto
+da74b70364ae        lsioarmhf/organizr                                "/init"                  3 minutes ago       Up 3 minutes (healthy)    0.0.0.0:80->80/tcp, 0.0.0.0:443->443/tcp   organizr
+2ae20fe4dee2        portainer/portainer                               "/portainer"             3 minutes ago       Up 3 minutes              0.0.0.0:9000->9000/tcp                     portainer
+ 
+From this point forward, the docker-compose-opt.service will stop and restart the containers in the proper order on reboot.
+
+ 
+ 
+
+Client certificates
+References:
+
+https://arcweb.co/securing-websites-nginx-and-client-side-certificate-authentication-linux/
+
+http://blog.christophermullins.com/2017/04/30/securing-homeassistant-with-client-certificates/
+
+ 
+With client certs, you can block password attacks and undesired connections to your setup. Clients without the proper cert can't connect to your site(s). Some people go so far as to turn off passwords completely! I'll leave that up to you...
+
+ 
+Prepare our CA (Certificate Authority)
+
+pi@RPi3:/opt/organizr $ mkdir ssl
+pi@RPi3:/opt/organizr $ cd ssl
+pi@RPi3:/opt/organizr/ssl $ mkdir -p certs/users
+pi@RPi3:/opt/organizr/ssl $ mkdir crl
+pi@RPi3:/opt/organizr/ssl $ mkdir private
+pi@RPi3:/opt/organizr/ssl $ touch index.txt
+pi@RPi3:/opt/organizr/ssl $ echo 'unique_subject = yes/no' > index.txt.attr
+pi@RPi3:/opt/organizr/ssl $ echo '01' > crlnumber
+ 
+Put this into a file called /opt/organizr/ssl/openssl.cnf
+
+https://gist.github.com/x99percent/2a79a8a7a7d9970c7e89dd89888e4ddc
+
+(maybe someone can improve on this config, but it should work as-is)
+
+ 
+With our directory structure in place, let's generate the server key, certificate, and CRL.
+
+pi@RPi3:/opt/organizr/ssl $ openssl genrsa -des3 -out private/ca.key 4096 -config openssl.cnf
+[pick a  strong password that you will remember!]
+pi@RPi3:/opt/organizr/ssl $ openssl req -new -x509 -days 365 -key private/ca.key -out certs/ca.crt -config openssl.cnf
+[re-enter that same strong password to unlock/use the server key and enter your certificate's details]
+pi@RPi3:/opt/organizr/ssl $ openssl ca -name CA_default -gencrl -keyfile private/ca.key -cert certs/ca.crt -out private/ca.crl -crldays 365 -config openssl.cnf
+[re-enter that same strong password to unlock/use the server key]
+ 
+Put this into a file called /opt/organizr/ssl/makeusercert.sh
+
+https://gist.github.com/x99percent/a73d58b1b13895dbaef233eef99e9b12
+
+ 
+Make that file executable.
+
+pi@RPi3:/opt/organizr/ssl $ chmod 755 makeusercert.sh
+ 
+Now, you can make certificates for devices/users with the command:
+
+pi@RPi3:/opt/organizr/ssl $ ./makeusercert.sh USERNAMEGOESHERE
+ 
+The first 3 times it asks for a password, that is the password for the new user key you are generating. Fill in your info similar to before, but make sure you use a different value for 'Common Name' than what you entered for the server certificate. You can leave the 'challenge password' blank. The 'Export Password' is used to keep your new user certificate safe while you transport it from the Pi to your device. The generated .p12 file is what you want to use... it is a client certificate signed by your server certificate.
+
+ 
+Updating Nginx
+
+Example config for Node-RED section in /opt/organizr/nginx/site-confs/default :
+
+server {
+        listen 443 ssl http2;
+
+        root /config/www;
+        index index.html index.htm index.php;
+
+        server_name nodered.YOURDOMAIN.duckdns.org;
+
+        client_max_body_size 0;
+
+        ssl_certificate /etc/letsencrypt/live/nodered.YOURDOMAIN.duckdns.org/fullchain.pem;
+        ssl_certificate_key /etc/letsencrypt/live/nodered.YOURDOMAIN.duckdns.org/privkey.pem;
+        ssl_protocols TLSv1.1 TLSv1.2;
+        ssl_ciphers "EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH:!aNULL:!eNULL:!EXPORT:!DES:!MD5:!PSK:!RC4";
+        add_header Strict-Transport-Security "max-age=31536000; includeSubdomains";
+        ssl_prefer_server_ciphers on;
+
+        ssl_client_certificate /config/ssl/certs/ca.crt;
+        ssl_verify_client on;
+
+        location / {
+            if ($ssl_client_verify != SUCCESS) {
+                return 403;
+            }
+
+            proxy_pass http://nodered/;
+            proxy_http_version 1.1;
+            proxy_set_header Connection "";
+        }
+}
+ 
+Revoking Certificates
+
+pi@RPi3:/opt/organizr/ssl $ openssl ca -name CA_Default -revoke certs/users/USERNAME.crt -keyfile private/ca.key -cert certs/ca.crt -config openssl.cnf
+pi@RPi3:/opt/organizr/ssl $ openssl ca -name CA_Default -gencrl -keyfile private/ca.key -cert certs/ca.crt -out private/ca.crl -crldays 365 -config openssl.cnf
+112 Comments
+
+Share
+
+Save
+
+Hide
+
+Report
+98% Upvoted
+This thread is archived
+New comments cannot be posted and votes cannot be cast
+SORT BY
+
+BEST
+
