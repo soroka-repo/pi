@@ -4,34 +4,40 @@
 <style>
     a { text-decoration: none; }
 </style>
-</ol><a href="README_linuxCNC_OS_Updates.html#PROCEDUREDebiansetupforLinuxCNC"><font color="blue"><h3 align='left'>  Debian setup for LinuxCNC</h3></font></a><ol>
-<font color="black"><h3 align='center'>VERSION: PS20260327:1106</font></h3>
-<li><a href="README_linuxCNC_OS_Updates.html#STEPLinuxcnchardware"> Linuxcnc hardware</a></li>
-<li><a href="README_linuxCNC_OS_Updates.html#STEPSetupTimezone"> Setup Timezone</a></li>
-<li><a href="README_linuxCNC_OS_Updates.html#STEPUpdateRPIfirmware"> Update RPI firmware</a></li>
-<li><a href="README_linuxCNC_OS_Updates.html#STEPInstallpiappsandthefollowingappswhicharemyfavoritesandmusthaves"> Install pi-apps and the following apps which are my favorites and must haves</a></li>
-<li><a href="README_linuxCNC_OS_Updates.html#STEPInstallssh"> Install ssh</a></li>
-<li><a href="README_linuxCNC_OS_Updates.html#STEPInstallufwfirewall"> Install ufw firewall</a></li>
-<li><a href="README_linuxCNC_OS_Updates.html#STEPFreeCADinstallwithFlatpack"> FreeCAD install with Flatpack</a></li>
-<li><a href="README_linuxCNC_OS_Updates.html#STEPInstallAudioApps"> Install Audio Apps</a></li>
-<li><a href="README_linuxCNC_OS_Updates.html#STEPRTLSDRSoftwareDefineRadio"> RTL SDR Software Define Radio</a></li>
-<li><a href="README_linuxCNC_OS_Updates.html#STEPUseridmanagement"> Userid management</a></li>
-<li><a href="README_linuxCNC_OS_Updates.html#STEPMountanextraNVMEdiskjustusingthedisktolistentomusicwithVLCwhileIconfigurethePIandwritethisdoc"> Mount an extra NVME disk (just using the disk to listen to music with VLC while I configure the PI and write this doc...)</a></li>
-<li><a href="README_linuxCNC_OS_Updates.html#STEPNetworkingaddinganextrainterfaceforLinuxCNC"> Networking adding an extra interface for LinuxCNC</a></li>
-<a href="README_linuxCNC_OS_Updates.html#EXAMPLE"><font color="black">&emsp; Example: <br></font></a>
+</ol><a href="./README_linuxCNC_OS_Updates.html#PROCEDUREDebiansetupforLinuxCNC"><font color="blue"><h3 align='left'>  Debian setup for LinuxCNC</h3></font></a><ol>
+<font color="black"><h3 align='center'>VERSION: PS20260712:1733</font></h3>
+<li><a href="./README_linuxCNC_OS_Updates.html#STEPLinuxcnchardware"> Linuxcnc hardware</a></li>
+<li><a href="./README_linuxCNC_OS_Updates.html#STEPSetupTimezone"> Setup Timezone</a></li>
+<li><a href="./README_linuxCNC_OS_Updates.html#STEPUpdateRPIfirmware"> Update RPI firmware</a></li>
+<li><a href="./README_linuxCNC_OS_Updates.html#STEPInstallaptupdateupgradeandinstallthefollowing"> Install apt update, upgrade and install the following</a></li>
+<li><a href="./README_linuxCNC_OS_Updates.html#STEPInstallpiappsandthefollowingappswhicharemyfavoritesandmusthaves"> Install pi-apps and the following apps which are my favorites and must haves</a></li>
+<li><a href="./README_linuxCNC_OS_Updates.html#STEPRunningBlenderonthePI"> Running Blender on the PI</a></li>
+<li><a href="./README_linuxCNC_OS_Updates.html#STEPInstallssh"> Install ssh</a></li>
+<li><a href="./README_linuxCNC_OS_Updates.html#STEPInstallufwfirewall"> Install ufw firewall</a></li>
+<li><a href="./README_linuxCNC_OS_Updates.html#STEPFlatPakinstallapplicationslikeFreeCADInkscapeCURA"> FlatPak install applications like: FreeCAD, Inkscape, CURA</a></li>
+<li><a href="./README_linuxCNC_OS_Updates.html#STEPInstallAudioApps"> Install Audio Apps</a></li>
+<li><a href="./README_linuxCNC_OS_Updates.html#STEPRTLSDRSoftwareDefineRadio"> RTL SDR Software Define Radio</a></li>
+<a href="./README_linuxCNC_OS_Updates.html#EXAMPLEeditblacklistrtlconfAddtheselinesandsaveCtrlXYEnter"><font color="black">&emsp; Example:  edit blacklist-rtl.conf - Add these lines and save (Ctrl+X, Y, Enter):<br></font></a>
 
-<a href="README_linuxCNC_OS_Updates.html#EXAMPLE"><font color="black">&emsp; Example: <br></font></a>
+<a href="./README_linuxCNC_OS_Updates.html#EXAMPLEnrsc5studiodesktopfilecontents"><font color="black">&emsp; Example:  nrsc5-studio.desktop file contents<br></font></a>
 
-<a href="README_linuxCNC_OS_Updates.html#EXAMPLE"><font color="black">&emsp; Example: <br></font></a>
+<li><a href="./README_linuxCNC_OS_Updates.html#STEPUseridmanagement"> Userid management</a></li>
+<li><a href="./README_linuxCNC_OS_Updates.html#STEPMountanextraNVMEdiskjustusingthedisktolistentomusicwithVLCwhileIconfigurethePIandwritethisdoc"> Mount an extra NVME disk (just using the disk to listen to music with VLC while I configure the PI and write this doc...)</a></li>
+<li><a href="./README_linuxCNC_OS_Updates.html#STEPNetworkingaddinganextrainterfaceforLinuxCNC"> Networking adding an extra interface for LinuxCNC</a></li>
+<a href="./README_linuxCNC_OS_Updates.html#EXAMPLE"><font color="black">&emsp; Example: <br></font></a>
 
-<li><a href="README_linuxCNC_OS_Updates.html#STEPenableHiFiBerrySoundcard"> enable HiFiBerry Sound card</a></li>
-<a href="README_linuxCNC_OS_Updates.html#EXAMPLE"><font color="black">&emsp; Example: <br></font></a>
+<a href="./README_linuxCNC_OS_Updates.html#EXAMPLE"><font color="black">&emsp; Example: <br></font></a>
+
+<a href="./README_linuxCNC_OS_Updates.html#EXAMPLE"><font color="black">&emsp; Example: <br></font></a>
+
+<li><a href="./README_linuxCNC_OS_Updates.html#STEPenableHiFiBerrySoundcard"> enable HiFiBerry Sound card</a></li>
+<a href="./README_linuxCNC_OS_Updates.html#EXAMPLE"><font color="black">&emsp; Example: <br></font></a>
 
 ###################################
 </h4></pre><h2 align='left' id="PROCEDUREDebiansetupforLinuxCNC">PROCEDURE: Debian setup for LinuxCNC</h2><pre><h4>
 #
 # Peter Soroka   
-</h4></pre><font size="2"><h1 align='center'>VERSION: PS20260327:1106</h1></font><pre><h4>
+</h4></pre><font size="2"><h1 align='center'>VERSION: PS20260712:1733</h1></font><pre><h4>
 # 
 ###################################
 </h4></pre><h3 align='left' id="STEPLinuxcnchardware">STEP: Linuxcnc hardware</h3><pre><h4>
@@ -68,12 +74,12 @@
  rpi-update
 
 ###################################
-###:STEP Install apt update, upgrade and install the following 
+</h4></pre><h3 align='left' id="STEPInstallaptupdateupgradeandinstallthefollowing">STEP: Install apt update, upgrade and install the following</h3><pre><h4>
 ###################################
  sudo su
  apt update
  apt upgrade
- apt install vlc vim gedit mtools
+ apt install vlc vim gedit mtools ksh
  apt install handbrake handbrake-cli           ### Video Transcoder
 
 ###################################
@@ -89,6 +95,74 @@
  OpenSCAD
  Snap Store  ### to run: /snap/bin/snap-store
  Transmission
+
+################################### 
+</h4></pre><h3 align='left' id="STEPRunningBlenderonthePI">STEP: Running Blender on the PI</h3><pre><h4>
+################################### 
+ Blender 3.4.1 is available on bookwork with an "apt install blender"
+ Blender is not available in Trixie
+
+####################
+# Compile the latest level of Blenter for the PI
+ sudo apt update
+ sudo apt install git build-essential cmake libx11-dev libxxf86vm-dev libxcursor-dev libxi-dev libxrandr-dev libxinerama-dev libglew-dev libopenexr-dev libopenimageio-dev libpython3-dev 
+ sudo apt install libavdevice-dev libavformat-dev libavcodec-dev libswscale-dev libavutil-dev
+ sudo apt install autoconf automake bison libtool yasm tcl ninja-build meson python3-mako patchelf pkg-config
+ sudo apt install git-lfs 
+ 
+ mkdir -p ~/github
+ cd ~/github
+ GIT_LFS_SKIP_SMUDGE=1;
+ git clone --recursive https://github.com/blender/blender.git ; 
+ cd blender;
+ git checkout -b v4.5.0; # or the latest stable version
+ git submodule update --init --recursive;
+ ./build_files/build_environment/install_linux_packages.py --all;
+ make deps
+ make update
+ #git lfs install
+ #git lfs fetch --all; ### git lfs pull
+ #git lfs checkout;
+ 
+ 
+ # go to https://download.blender.org/source/ and download the source file and untar the file
+  tar -xf blender-4.5.0.tar.xz  
+  cd blender-4.5.0
+  ./build_files/build_environment/install_linux_packages.py --distro-id debian
+  
+ mkdir build_pi5;
+ cd build_pi5;
+ cmake .. &#92
+    -DCMAKE_BUILD_TYPE=Release &#92
+    -DWITH_CYCLES=OFF &#92
+    -DWITH_OPENVDB=OFF &#92
+    -DWITH_MOD_OCEAN=OFF &#92
+    -DWITH_AUDASPACE=OFF &#92
+    -DWITH_BLENDER=ON &#92
+    -DWITH_PYTHON_INSTALL=OFF &#92
+    -DWITH_PYTHON_MODULE=OFF &#92
+    -DWITH_INSTALL_PORTABLE=ON &#92
+    -DCMAKE_CXX_FLAGS="-march=armv8-a+crc+crypto -O3" &#92
+    -DCMAKE_C_FLAGS="-march=armv8-a+crc+crypto -O3" &#92
+    -DWITH_VULKAN_BACKEND=ON;
+### Key Flag Breakdown for Performance:
+#    -DCMAKE_BUILD_TYPE=Release: Disables debug symbols, increasing speed.
+#    -DWITH_CYCLES=OFF: Drastically speeds up compilation and reduces memory footprint if you are only modeling.
+#    -march=armv8-a+crc+crypto -O3: Tells GCC to optimize for ARMv8 with CRC and Crypto extensions (supported by Pi 5) and enables aggressive optimization.
+#    -DWITH_VULKAN_BACKEND=ON: Essential for utilizing the Pi 5's improved GPU drivers (via Igalia/Mesa) for viewport modeling.
+#    -DWITH_AUDASPACE=OFF: Removes audio dependencies, unnecessary for modeling. 
+ make -j$(nproc) install
+
+
+############
+
+
+# Run with software rendering
+ LIBGL_ALWAYS_SOFTWARE=true blender
+# Run by forcing the openGL level
+ MESA_GL_VERSION_OVERRIDE=3.3 blender
+
+
 
 ################################### 
 </h4></pre><h3 align='left' id="STEPInstallssh">STEP: Install ssh</h3><pre><h4>
@@ -111,19 +185,21 @@
  sudo ufw status verbose ### shows the default rules too
 
 ###################################
-</h4></pre><h3 align='left' id="STEPFreeCADinstallwithFlatpack">STEP: FreeCAD install with Flatpack</h3><pre><h4>
+</h4></pre><h3 align='left' id="STEPFlatPakinstallapplicationslikeFreeCADInkscapeCURA">STEP: FlatPak install applications like: FreeCAD, Inkscape, CURA</h3><pre><h4>
 ###################################
+# Setup foe flatpak
  sudo apt update
  sudo apt install -y flatpak
- sudo flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repflathub.flatpakrepo
+ sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 
 ### MAKER
  sudo flatpak install -y --system flathub org.freecad.FreeCAD  ### CAD/CAM 2D 3D
  sudo flatpak install -y flathub org.gimp.GIMP                 ### GNU Image Manipulation
+ sudo flatpak install -y flathub org.ultimaker.cura            ### 3D Slicer
 
-### PHOTO GRAPHIC
+### PHOTO / GRAPHIC
  sudo flatpak install -y flathub org.darktable.Darktable       ### Photo Manipulation
- sudo flatpak install -y flathub org.inkscape.Inkscape         ### Vector 
+ sudo flatpak install -y flathub org.inkscape.Inkscape         ### Vector Graphics Editor
 
 ### AUDIO
  sudo flatpak install -y flathub org.hydrogenmusic.Hydrogen    ### Drum Kit Machine 
@@ -139,21 +215,22 @@
 ### CONNECT
  sudo flatpak install -y flathub org.telegram.desktop          ### Text Messaging
   
-  
 # to run or go to the "Graphics" tab after reboot
-
  flatpak run org.freecad.FreeCAD
 
 # flatpack management
 
 # List installed flatpaks
-flatpak list
+ flatpak list
 
 # List all available applications
-flatpak remote-ls flathub --app
+ flatpak remote-ls flathub --app
 
-# Update just flatpaks
-flatpak update
+# Update flatpaks
+ sudo flatpak update
+
+# Just update one
+ sudo flatpak update org.freecad.FreeCAD
 
 ###################################
 </h4></pre><h3 align='left' id="STEPInstallAudioApps">STEP: Install Audio Apps</h3><pre><h4>
@@ -164,27 +241,115 @@ flatpak update
  apt install k3b tk k3b-i18n sox cdrskin k3b-extrathemes  normalize-audio   ### CD burning
  apt install yoshimi  ### synth
 
+# During the above installs the following are Suggested packages:
+</h4></pre><h3 align='left' id="#NOTEI'mnotsurewhattheyalldobuttheywillinstallonTrixie"># (NOTE: I'm not sure what they all do but they will install on Trixie...)</h3><pre><h4>
+  apt install libasm-java fonts-ipafont-gothic fonts-indic timidity libxz-java fonts-ipafont-mincho 
+  apt install lilypond fluid-soundfont-gs meterbridge libaudio2 libsox-fmt-all lame-doc
+  apt install pulseaudio-utils liblo-dev libperl4-corelibs-perl xorriso
+  apt install wodim cdrkit-doc mpg123 tcl-tclreadline gnuplot
+  apt install freepats pmidi timidity-daemon guile-2.2-doc libmpfi-doc debhelper
+  apt install xzdec hintview wp2latex nas lilypond-doc perl-tk texlive-binaries-sse2 
+  apt install texlive-latex-base-doc pulseaudio xorriso-tcltk jigit cdck icedax oss-compat
+
 ###################################
 </h4></pre><h3 align='left' id="STEPRTLSDRSoftwareDefineRadio">STEP: RTL SDR Software Define Radio</h3><pre><h4>
 ###################################
 
  apt install rtl-sdr rtl-433 rtl-ais icecast2
  apt install ices2 uhd-host cmake ices2 libusb-1.0-0-dev
- apt install gqrx-sdr
+ apt install gqrx-sdr menu
 
 # create the following file to blacklist the default DTV drivers from installing
  sudo nano /etc/modprobe.d/blacklist-rtl.conf
 
-Add these lines and save (Ctrl+X, Y, Enter):
-
-blacklist dvb_usb_rtl28xxu
+<h4 align='left' id="EXAMPLEeditblacklistrtlconfAddtheselinesandsaveCtrlXYEnter">EXAMPLE: edit blacklist-rtl.conf - Add these lines and save (Ctrl+X, Y, Enter):
+</h4><pre><p style="border:3px; border-style:solid; border-color:green; padding: 0em;"><span style="white-space: nowrap;">
+blacklist dvb_usb_rtl28xxu</span>
 blacklist rtl2832
 blacklist rtl2830
+</p><h4>
 
+# then connect your RTL-SDR and reboot
  reboot
 
+# Uaage
  rtl_test -t  ### to see your device
- gqrx ### to start listening
+ gqrx ### to start listening, this is a basic receiver
+
+################################################################
+# if you got the basic gqrx to work Lets proceed to compile nrsc5
+################################################################
+# The following are the steps AI has worked out to compile nrsc5. At the end I asked
+# AI to wrap up the install into a script and AI did it seems to be correct but since 
+# I have not tried it... Located at /home/soroka/github/install_nrsc5_studio.sh until
+# I give it a try...
+#
+# nrsc5 pre-req
+ sudo apt update
+ sudo apt install -y git build-essential cmake autoconf libtool libao-dev libfftw3-dev librtlsdr-dev
+# nrsc5 core git clone and make
+ cd ~/github
+ git clone https://github.com/theori-io/nrsc5.git
+ cd nrsc5
+ mkdir build && cd build
+# nrsc5 core compile
+ cmake -DUSE_NEON=ON ..
+ make -j4
+ sudo make install
+ sudo ldconfig
+# clone compile nrsc5-studio
+# 1. nesc5-studio pre-req
+ sudo apt update
+ sudo apt install -y pkg-config libx11-dev libxcursor-dev libxi-dev libgl1-mesa-dev libfontconfig1-dev curl git
+ sudo apt install -y libsoapysdr-dev soapysdr-module-rtlsdr
+ sudo apt install -y pkg-config libasound2-dev
+ sudo apt install -y clang libclang-dev
+# 2. Download and install Rust
+ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+# 3. Update your current terminal session context with Rust paths
+ source "$HOME/.cargo/env"
+# 4. git clone
+ cd ~/github
+ git clone https://github.com/LTCAshraven/nrsc5-studio
+ cd nrsc5-studio
+# 5. build
+ replace the .src/main.rs with the pacthed version
+ cargo build --release 
+# 6. config
+ # Add your user to groups
+ sudo usermod -a -G plugdev soroka
+ sudo usermod -a -G dialout soroka
+# Copy rules & reload hardware subsystem
+ sudo cp /lib/udev/rules.d/60-librtlsdr0.rules /etc/udev/rules.d/20-rtlsdr.rules
+ sudo udevadm control --reload-rules && sudo udevadm trigger
+# 7. run
+ WGPU_BACKEND=gl ./target/release/nrsc5-studio
+# 8. The X11 Graphical Desktop Launcher Icon
+# To add a clickable shortcut launcher icon to your system Applications menu and your visible X11 desktop space,
+#  create an application shortcut configuration template.Run this command to create the launcher description 
+#  context profile file:
+ vi ~/.local/share/applications/nrsc5-studio.desktop
+<h4 align='left' id="EXAMPLEnrsc5studiodesktopfilecontents">EXAMPLE: nrsc5-studio.desktop file contents
+</h4><pre><p style="border:3px; border-style:solid; border-color:green; padding: 0em;"><span style="white-space: nowrap;">
+[Desktop Entry]</span>
+Version=1.0
+Type=Application
+Name=NRSC5 HD Radio Studio
+Comment=Graphical HD Radio Decoder Suite for RTL-SDR
+Exec=env WGPU_BACKEND=gl /home/soroka/github/nrsc5-studio/target/release/nrsc5-studio
+Icon=/home/$USER/github/nrsc5-studio/packaging/linux/icons/hicolor/256x256/apps/nrsc5-studio.png
+Terminal=false
+Categories=AudioVideo;Receiver;Radio;
+Keywords=SDR;HD;Radio;FM;
+Path=/home/$USER/github/nrsc5-studio
+</p><h4>
+
+# To put a direct working clone copy straight onto your visible desktop backdrop, run:
+ cp ~/.local/share/applications/nrsc5-studio.desktop ~/Desktop/
+ chmod +x ~/Desktop/nrsc5-studio.desktop
+ 
+
+
 
 ###################################
 </h4></pre><h3 align='left' id="STEPUseridmanagement">STEP: Userid management</h3><pre><h4>

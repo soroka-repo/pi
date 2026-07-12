@@ -2,7 +2,7 @@
 ###PROCEDURE: Debian setup for LinuxCNC
 #
 # Peter Soroka   
-###VERSION: PS20260327:1106
+###VERSION: PS20260712:1733
 # 
 ###################################
 ###STEP: Linuxcnc hardware
@@ -39,12 +39,12 @@
  rpi-update
 
 ###################################
-###:STEP Install apt update, upgrade and install the following 
+###STEP: Install apt update, upgrade and install the following 
 ###################################
  sudo su
  apt update
  apt upgrade
- apt install vlc vim gedit mtools
+ apt install vlc vim gedit mtools ksh
  apt install handbrake handbrake-cli           ### Video Transcoder
 
 ###################################
@@ -60,6 +60,74 @@
  OpenSCAD
  Snap Store  ### to run: /snap/bin/snap-store
  Transmission
+
+################################### 
+###STEP: Running Blender on the PI
+################################### 
+ Blender 3.4.1 is available on bookwork with an "apt install blender"
+ Blender is not available in Trixie
+
+####################
+# Compile the latest level of Blenter for the PI
+ sudo apt update
+ sudo apt install git build-essential cmake libx11-dev libxxf86vm-dev libxcursor-dev libxi-dev libxrandr-dev libxinerama-dev libglew-dev libopenexr-dev libopenimageio-dev libpython3-dev 
+ sudo apt install libavdevice-dev libavformat-dev libavcodec-dev libswscale-dev libavutil-dev
+ sudo apt install autoconf automake bison libtool yasm tcl ninja-build meson python3-mako patchelf pkg-config
+ sudo apt install git-lfs 
+ 
+ mkdir -p ~/github
+ cd ~/github
+ GIT_LFS_SKIP_SMUDGE=1;
+ git clone --recursive https://github.com/blender/blender.git ; 
+ cd blender;
+ git checkout -b v4.5.0; # or the latest stable version
+ git submodule update --init --recursive;
+ ./build_files/build_environment/install_linux_packages.py --all;
+ make deps
+ make update
+ #git lfs install
+ #git lfs fetch --all; ### git lfs pull
+ #git lfs checkout;
+ 
+ 
+ # go to https://download.blender.org/source/ and download the source file and untar the file
+  tar -xf blender-4.5.0.tar.xz  
+  cd blender-4.5.0
+  ./build_files/build_environment/install_linux_packages.py --distro-id debian
+  
+ mkdir build_pi5;
+ cd build_pi5;
+ cmake .. \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DWITH_CYCLES=OFF \
+    -DWITH_OPENVDB=OFF \
+    -DWITH_MOD_OCEAN=OFF \
+    -DWITH_AUDASPACE=OFF \
+    -DWITH_BLENDER=ON \
+    -DWITH_PYTHON_INSTALL=OFF \
+    -DWITH_PYTHON_MODULE=OFF \
+    -DWITH_INSTALL_PORTABLE=ON \
+    -DCMAKE_CXX_FLAGS="-march=armv8-a+crc+crypto -O3" \
+    -DCMAKE_C_FLAGS="-march=armv8-a+crc+crypto -O3" \
+    -DWITH_VULKAN_BACKEND=ON;
+### Key Flag Breakdown for Performance:
+#    -DCMAKE_BUILD_TYPE=Release: Disables debug symbols, increasing speed.
+#    -DWITH_CYCLES=OFF: Drastically speeds up compilation and reduces memory footprint if you are only modeling.
+#    -march=armv8-a+crc+crypto -O3: Tells GCC to optimize for ARMv8 with CRC and Crypto extensions (supported by Pi 5) and enables aggressive optimization.
+#    -DWITH_VULKAN_BACKEND=ON: Essential for utilizing the Pi 5's improved GPU drivers (via Igalia/Mesa) for viewport modeling.
+#    -DWITH_AUDASPACE=OFF: Removes audio dependencies, unnecessary for modeling. 
+ make -j$(nproc) install
+
+
+############
+
+
+# Run with software rendering
+ LIBGL_ALWAYS_SOFTWARE=true blender
+# Run by forcing the openGL level
+ MESA_GL_VERSION_OVERRIDE=3.3 blender
+
+
 
 ################################### 
 ###STEP: Install ssh
@@ -82,19 +150,21 @@
  sudo ufw status verbose ### shows the default rules too
 
 ###################################
-###STEP: FreeCAD install with Flatpack
+###STEP: FlatPak install applications like: FreeCAD, Inkscape, CURA
 ###################################
+# Setup foe flatpak
  sudo apt update
  sudo apt install -y flatpak
- sudo flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repflathub.flatpakrepo
+ sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 
 ### MAKER
  sudo flatpak install -y --system flathub org.freecad.FreeCAD  ### CAD/CAM 2D 3D
  sudo flatpak install -y flathub org.gimp.GIMP                 ### GNU Image Manipulation
+ sudo flatpak install -y flathub org.ultimaker.cura            ### 3D Slicer
 
-### PHOTO GRAPHIC
+### PHOTO / GRAPHIC
  sudo flatpak install -y flathub org.darktable.Darktable       ### Photo Manipulation
- sudo flatpak install -y flathub org.inkscape.Inkscape         ### Vector 
+ sudo flatpak install -y flathub org.inkscape.Inkscape         ### Vector Graphics Editor
 
 ### AUDIO
  sudo flatpak install -y flathub org.hydrogenmusic.Hydrogen    ### Drum Kit Machine 
@@ -110,21 +180,22 @@
 ### CONNECT
  sudo flatpak install -y flathub org.telegram.desktop          ### Text Messaging
   
-  
 # to run or go to the "Graphics" tab after reboot
-
  flatpak run org.freecad.FreeCAD
 
 # flatpack management
 
 # List installed flatpaks
-flatpak list
+ flatpak list
 
 # List all available applications
-flatpak remote-ls flathub --app
+ flatpak remote-ls flathub --app
 
-# Update just flatpaks
-flatpak update
+# Update flatpaks
+ sudo flatpak update
+
+# Just update one
+ sudo flatpak update org.freecad.FreeCAD
 
 ###################################
 ###STEP: Install Audio Apps
@@ -135,27 +206,113 @@ flatpak update
  apt install k3b tk k3b-i18n sox cdrskin k3b-extrathemes  normalize-audio   ### CD burning
  apt install yoshimi  ### synth
 
+# During the above installs the following are Suggested packages:
+# (NOTE: I'm not sure what they all do but they will install on Trixie...)
+  apt install libasm-java fonts-ipafont-gothic fonts-indic timidity libxz-java fonts-ipafont-mincho 
+  apt install lilypond fluid-soundfont-gs meterbridge libaudio2 libsox-fmt-all lame-doc
+  apt install pulseaudio-utils liblo-dev libperl4-corelibs-perl xorriso
+  apt install wodim cdrkit-doc mpg123 tcl-tclreadline gnuplot
+  apt install freepats pmidi timidity-daemon guile-2.2-doc libmpfi-doc debhelper
+  apt install xzdec hintview wp2latex nas lilypond-doc perl-tk texlive-binaries-sse2 
+  apt install texlive-latex-base-doc pulseaudio xorriso-tcltk jigit cdck icedax oss-compat
+
 ###################################
 ###STEP: RTL SDR Software Define Radio
 ###################################
 
  apt install rtl-sdr rtl-433 rtl-ais icecast2
  apt install ices2 uhd-host cmake ices2 libusb-1.0-0-dev
- apt install gqrx-sdr
+ apt install gqrx-sdr menu
 
 # create the following file to blacklist the default DTV drivers from installing
  sudo nano /etc/modprobe.d/blacklist-rtl.conf
 
-Add these lines and save (Ctrl+X, Y, Enter):
-
+###EXAMPLE: edit blacklist-rtl.conf - Add these lines and save (Ctrl+X, Y, Enter):
 blacklist dvb_usb_rtl28xxu
 blacklist rtl2832
 blacklist rtl2830
+###EXAMPLE_END:
 
+# then connect your RTL-SDR and reboot
  reboot
 
+# Uaage
  rtl_test -t  ### to see your device
- gqrx ### to start listening
+ gqrx ### to start listening, this is a basic receiver
+
+################################################################
+# if you got the basic gqrx to work Lets proceed to compile nrsc5
+################################################################
+# The following are the steps AI has worked out to compile nrsc5. At the end I asked
+# AI to wrap up the install into a script and AI did it seems to be correct but since 
+# I have not tried it... Located at /home/soroka/github/install_nrsc5_studio.sh until
+# I give it a try...
+#
+# nrsc5 pre-req
+ sudo apt update
+ sudo apt install -y git build-essential cmake autoconf libtool libao-dev libfftw3-dev librtlsdr-dev
+# nrsc5 core git clone and make
+ cd ~/github
+ git clone https://github.com/theori-io/nrsc5.git
+ cd nrsc5
+ mkdir build && cd build
+# nrsc5 core compile
+ cmake -DUSE_NEON=ON ..
+ make -j4
+ sudo make install
+ sudo ldconfig
+# clone compile nrsc5-studio
+# 1. nesc5-studio pre-req
+ sudo apt update
+ sudo apt install -y pkg-config libx11-dev libxcursor-dev libxi-dev libgl1-mesa-dev libfontconfig1-dev curl git
+ sudo apt install -y libsoapysdr-dev soapysdr-module-rtlsdr
+ sudo apt install -y pkg-config libasound2-dev
+ sudo apt install -y clang libclang-dev
+# 2. Download and install Rust
+ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+# 3. Update your current terminal session context with Rust paths
+ source "$HOME/.cargo/env"
+# 4. git clone
+ cd ~/github
+ git clone https://github.com/LTCAshraven/nrsc5-studio
+ cd nrsc5-studio
+# 5. build
+ replace the .src/main.rs with the pacthed version
+ cargo build --release 
+# 6. config
+ # Add your user to groups
+ sudo usermod -a -G plugdev soroka
+ sudo usermod -a -G dialout soroka
+# Copy rules & reload hardware subsystem
+ sudo cp /lib/udev/rules.d/60-librtlsdr0.rules /etc/udev/rules.d/20-rtlsdr.rules
+ sudo udevadm control --reload-rules && sudo udevadm trigger
+# 7. run
+ WGPU_BACKEND=gl ./target/release/nrsc5-studio
+# 8. The X11 Graphical Desktop Launcher Icon
+# To add a clickable shortcut launcher icon to your system Applications menu and your visible X11 desktop space,
+#  create an application shortcut configuration template.Run this command to create the launcher description 
+#  context profile file:
+ vi ~/.local/share/applications/nrsc5-studio.desktop
+###EXAMPLE: nrsc5-studio.desktop file contents 
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=NRSC5 HD Radio Studio
+Comment=Graphical HD Radio Decoder Suite for RTL-SDR
+Exec=env WGPU_BACKEND=gl /home/soroka/github/nrsc5-studio/target/release/nrsc5-studio
+Icon=/home/$USER/github/nrsc5-studio/packaging/linux/icons/hicolor/256x256/apps/nrsc5-studio.png
+Terminal=false
+Categories=AudioVideo;Receiver;Radio;
+Keywords=SDR;HD;Radio;FM;
+Path=/home/$USER/github/nrsc5-studio
+###EXAMPLE_END:
+
+# To put a direct working clone copy straight onto your visible desktop backdrop, run:
+ cp ~/.local/share/applications/nrsc5-studio.desktop ~/Desktop/
+ chmod +x ~/Desktop/nrsc5-studio.desktop
+ 
+
+
 
 ###################################
 ###STEP: Userid management
