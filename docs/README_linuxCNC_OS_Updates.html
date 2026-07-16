@@ -4,40 +4,43 @@
 <style>
     a { text-decoration: none; }
 </style>
-</ol><a href="./README_linuxCNC_OS_Updates.html#PROCEDUREDebiansetupforLinuxCNC"><font color="blue"><h3 align='left'>  Debian setup for LinuxCNC</h3></font></a><ol>
-<font color="black"><h3 align='center'>VERSION: PS20260712:1733</font></h3>
-<li><a href="./README_linuxCNC_OS_Updates.html#STEPLinuxcnchardware"> Linuxcnc hardware</a></li>
-<li><a href="./README_linuxCNC_OS_Updates.html#STEPSetupTimezone"> Setup Timezone</a></li>
-<li><a href="./README_linuxCNC_OS_Updates.html#STEPUpdateRPIfirmware"> Update RPI firmware</a></li>
-<li><a href="./README_linuxCNC_OS_Updates.html#STEPInstallaptupdateupgradeandinstallthefollowing"> Install apt update, upgrade and install the following</a></li>
-<li><a href="./README_linuxCNC_OS_Updates.html#STEPInstallpiappsandthefollowingappswhicharemyfavoritesandmusthaves"> Install pi-apps and the following apps which are my favorites and must haves</a></li>
-<li><a href="./README_linuxCNC_OS_Updates.html#STEPRunningBlenderonthePI"> Running Blender on the PI</a></li>
-<li><a href="./README_linuxCNC_OS_Updates.html#STEPInstallssh"> Install ssh</a></li>
-<li><a href="./README_linuxCNC_OS_Updates.html#STEPInstallufwfirewall"> Install ufw firewall</a></li>
-<li><a href="./README_linuxCNC_OS_Updates.html#STEPFlatPakinstallapplicationslikeFreeCADInkscapeCURA"> FlatPak install applications like: FreeCAD, Inkscape, CURA</a></li>
-<li><a href="./README_linuxCNC_OS_Updates.html#STEPInstallAudioApps"> Install Audio Apps</a></li>
-<li><a href="./README_linuxCNC_OS_Updates.html#STEPRTLSDRSoftwareDefineRadio"> RTL SDR Software Define Radio</a></li>
-<a href="./README_linuxCNC_OS_Updates.html#EXAMPLEeditblacklistrtlconfAddtheselinesandsaveCtrlXYEnter"><font color="black">&emsp; Example:  edit blacklist-rtl.conf - Add these lines and save (Ctrl+X, Y, Enter):<br></font></a>
+</ol><a href="README_linuxCNC_OS_Updates.html#PROCEDUREDebiansetupforLinuxCNC"><font color="blue"><h3 align='left'>  Debian setup for LinuxCNC</h3></font></a><ol>
+<font color="black"><h3 align='center'>VERSION: PS20260716:1600</font></h3>
+<li><a href="README_linuxCNC_OS_Updates.html#STEPLinuxcnchardware"> Linuxcnc hardware</a></li>
+<li><a href="README_linuxCNC_OS_Updates.html#STEPSetupTimezone"> Setup Timezone</a></li>
+<li><a href="README_linuxCNC_OS_Updates.html#STEPUpdateRPIfirmware"> Update RPI firmware</a></li>
+<li><a href="README_linuxCNC_OS_Updates.html#STEPInstallaptupdateupgradeandinstallthefollowing"> Install apt update, upgrade and install the following</a></li>
+<li><a href="README_linuxCNC_OS_Updates.html#STEPInstallpiappsandthefollowingappswhicharemyfavoritesandmusthaves"> Install pi-apps and the following apps which are my favorites and must haves</a></li>
+<li><a href="README_linuxCNC_OS_Updates.html#STEPIncreasethepagingswapspace"> Increase the paging swap space</a></li>
+<a href="README_linuxCNC_OS_Updates.html#EXAMPLEswaponshow"><font color="black">&emsp; Example:  swapon --show<br></font></a>
 
-<a href="./README_linuxCNC_OS_Updates.html#EXAMPLEnrsc5studiodesktopfilecontents"><font color="black">&emsp; Example:  nrsc5-studio.desktop file contents<br></font></a>
+<li><a href="README_linuxCNC_OS_Updates.html#STEPInstallssh"> Install ssh</a></li>
+<li><a href="README_linuxCNC_OS_Updates.html#STEPInstallufwfirewall"> Install ufw firewall</a></li>
+<li><a href="README_linuxCNC_OS_Updates.html#STEPFlatPakinstallapplicationslikeFreeCADInkscapeCURA"> FlatPak install applications like: FreeCAD, Inkscape, CURA</a></li>
+<li><a href="README_linuxCNC_OS_Updates.html#STEPInstallAudioApps"> Install Audio Apps</a></li>
+<li><a href="README_linuxCNC_OS_Updates.html#STEPRTLSDRSoftwareDefineRadio"> RTL SDR Software Define Radio</a></li>
+<a href="README_linuxCNC_OS_Updates.html#EXAMPLEeditblacklistrtlconfAddtheselinesandsaveCtrlXYEnter"><font color="black">&emsp; Example:  edit blacklist-rtl.conf - Add these lines and save (Ctrl+X, Y, Enter):<br></font></a>
 
-<li><a href="./README_linuxCNC_OS_Updates.html#STEPUseridmanagement"> Userid management</a></li>
-<li><a href="./README_linuxCNC_OS_Updates.html#STEPMountanextraNVMEdiskjustusingthedisktolistentomusicwithVLCwhileIconfigurethePIandwritethisdoc"> Mount an extra NVME disk (just using the disk to listen to music with VLC while I configure the PI and write this doc...)</a></li>
-<li><a href="./README_linuxCNC_OS_Updates.html#STEPNetworkingaddinganextrainterfaceforLinuxCNC"> Networking adding an extra interface for LinuxCNC</a></li>
-<a href="./README_linuxCNC_OS_Updates.html#EXAMPLE"><font color="black">&emsp; Example: <br></font></a>
+<a href="README_linuxCNC_OS_Updates.html#EXAMPLEnrsc5studiodesktopfilecontents"><font color="black">&emsp; Example:  nrsc5-studio.desktop file contents<br></font></a>
 
-<a href="./README_linuxCNC_OS_Updates.html#EXAMPLE"><font color="black">&emsp; Example: <br></font></a>
+<li><a href="README_linuxCNC_OS_Updates.html#STEPUseridmanagement"> Userid management</a></li>
+<li><a href="README_linuxCNC_OS_Updates.html#STEPMountanextraNVMEdiskjustusingthedisktolistentomusicwithVLCwhileIconfigurethePIandwritethisdoc"> Mount an extra NVME disk (just using the disk to listen to music with VLC while I configure the PI and write this doc...)</a></li>
+<li><a href="README_linuxCNC_OS_Updates.html#STEPNetworkingaddinganextrainterfaceforLinuxCNC"> Networking adding an extra interface for LinuxCNC</a></li>
+<a href="README_linuxCNC_OS_Updates.html#EXAMPLE"><font color="black">&emsp; Example: <br></font></a>
 
-<a href="./README_linuxCNC_OS_Updates.html#EXAMPLE"><font color="black">&emsp; Example: <br></font></a>
+<a href="README_linuxCNC_OS_Updates.html#EXAMPLE"><font color="black">&emsp; Example: <br></font></a>
 
-<li><a href="./README_linuxCNC_OS_Updates.html#STEPenableHiFiBerrySoundcard"> enable HiFiBerry Sound card</a></li>
-<a href="./README_linuxCNC_OS_Updates.html#EXAMPLE"><font color="black">&emsp; Example: <br></font></a>
+<a href="README_linuxCNC_OS_Updates.html#EXAMPLE"><font color="black">&emsp; Example: <br></font></a>
 
+<li><a href="README_linuxCNC_OS_Updates.html#STEPenableHiFiBerrySoundcard"> enable HiFiBerry Sound card</a></li>
+<a href="README_linuxCNC_OS_Updates.html#EXAMPLE"><font color="black">&emsp; Example: <br></font></a>
+
+<li><a href="README_linuxCNC_OS_Updates.html#STEPRunningBlenderonthePI"> Running Blender on the PI</a></li>
 ###################################
 </h4></pre><h2 align='left' id="PROCEDUREDebiansetupforLinuxCNC">PROCEDURE: Debian setup for LinuxCNC</h2><pre><h4>
 #
 # Peter Soroka   
-</h4></pre><font size="2"><h1 align='center'>VERSION: PS20260712:1733</h1></font><pre><h4>
+</h4></pre><font size="2"><h1 align='center'>VERSION: PS20260716:1600</h1></font><pre><h4>
 # 
 ###################################
 </h4></pre><h3 align='left' id="STEPLinuxcnchardware">STEP: Linuxcnc hardware</h3><pre><h4>
@@ -96,73 +99,44 @@
  Snap Store  ### to run: /snap/bin/snap-store
  Transmission
 
-################################### 
-</h4></pre><h3 align='left' id="STEPRunningBlenderonthePI">STEP: Running Blender on the PI</h3><pre><h4>
-################################### 
- Blender 3.4.1 is available on bookwork with an "apt install blender"
- Blender is not available in Trixie
 
-####################
-# Compile the latest level of Blenter for the PI
- sudo apt update
- sudo apt install git build-essential cmake libx11-dev libxxf86vm-dev libxcursor-dev libxi-dev libxrandr-dev libxinerama-dev libglew-dev libopenexr-dev libopenimageio-dev libpython3-dev 
- sudo apt install libavdevice-dev libavformat-dev libavcodec-dev libswscale-dev libavutil-dev
- sudo apt install autoconf automake bison libtool yasm tcl ninja-build meson python3-mako patchelf pkg-config
- sudo apt install git-lfs 
- 
- mkdir -p ~/github
- cd ~/github
- GIT_LFS_SKIP_SMUDGE=1;
- git clone --recursive https://github.com/blender/blender.git ; 
- cd blender;
- git checkout -b v4.5.0; # or the latest stable version
- git submodule update --init --recursive;
- ./build_files/build_environment/install_linux_packages.py --all;
- make deps
- make update
- #git lfs install
- #git lfs fetch --all; ### git lfs pull
- #git lfs checkout;
- 
- 
- # go to https://download.blender.org/source/ and download the source file and untar the file
-  tar -xf blender-4.5.0.tar.xz  
-  cd blender-4.5.0
-  ./build_files/build_environment/install_linux_packages.py --distro-id debian
-  
- mkdir build_pi5;
- cd build_pi5;
- cmake .. &#92
-    -DCMAKE_BUILD_TYPE=Release &#92
-    -DWITH_CYCLES=OFF &#92
-    -DWITH_OPENVDB=OFF &#92
-    -DWITH_MOD_OCEAN=OFF &#92
-    -DWITH_AUDASPACE=OFF &#92
-    -DWITH_BLENDER=ON &#92
-    -DWITH_PYTHON_INSTALL=OFF &#92
-    -DWITH_PYTHON_MODULE=OFF &#92
-    -DWITH_INSTALL_PORTABLE=ON &#92
-    -DCMAKE_CXX_FLAGS="-march=armv8-a+crc+crypto -O3" &#92
-    -DCMAKE_C_FLAGS="-march=armv8-a+crc+crypto -O3" &#92
-    -DWITH_VULKAN_BACKEND=ON;
-### Key Flag Breakdown for Performance:
-#    -DCMAKE_BUILD_TYPE=Release: Disables debug symbols, increasing speed.
-#    -DWITH_CYCLES=OFF: Drastically speeds up compilation and reduces memory footprint if you are only modeling.
-#    -march=armv8-a+crc+crypto -O3: Tells GCC to optimize for ARMv8 with CRC and Crypto extensions (supported by Pi 5) and enables aggressive optimization.
-#    -DWITH_VULKAN_BACKEND=ON: Essential for utilizing the Pi 5's improved GPU drivers (via Igalia/Mesa) for viewport modeling.
-#    -DWITH_AUDASPACE=OFF: Removes audio dependencies, unnecessary for modeling. 
- make -j$(nproc) install
+###################################
+</h4></pre><h3 align='left' id="STEPIncreasethepagingswapspace">STEP: Increase the paging swap space</h3><pre><h4>
+#################################
+# lets add 32g of swap space patched in so you have to have the space on you NVME
+# if not you will need to use gpartd to reduce the / file system the ideal way to do 
+# this would be to boot off a microSD card and move the swap space before the / root
+# file system
 
+# View what we have now
+ free -h
+ swapon --show
+</h4></pre><h3 align='left' id="#NOTEontheJetsonOrinNanoSuperwedisabletheZRAMonthePIwewillleaveitactive"># NOTE: on the Jetson Orin Nano Super we disable the ZRAM on the PI we will leave it active</h3><pre><h4>
+# create the swapfile
+ sudo fallocate -l 32G /swapfile
+# set premisssions
+ sudo chmod 600 /swapfile
+# setup swap area
+ sudo mkswap /swapfile
+# Enable the swap
+ sudo swapon /swapfile
+# Make it survive a reboot
+ cat /etc/fstab # this is what you are starting with
+ sudo cp /etc/fstab /etc/fstab.bak # backing it up in case you make a mistake
+ sudo echo '/swapfile none swap sw,pri=10 0 0'|sudo tee -a /etc/fstab # add a line
+ cat /etc/fstab # this should be what you started with plus the line added above
+# view what we have now
+ free -h
+ swapon --show
 
-############
+<h4 align='left' id="EXAMPLEswaponshow">EXAMPLE: swapon --show
+</h4><pre><p style="border:3px; border-style:solid; border-color:green; padding: 0em;"><span style="white-space: nowrap;">
+NAME           TYPE      SIZE USED PRIO</span>
+/dev/zram0     partition   2G   0B  100
+/dev/nvme0n1p3 partition  32G   0B   10
+</p><h4>
 
-
-# Run with software rendering
- LIBGL_ALWAYS_SOFTWARE=true blender
-# Run by forcing the openGL level
- MESA_GL_VERSION_OVERRIDE=3.3 blender
-
-
+</h4></pre><h3 align='left' id="#NOTEthePRIOzramshouldbehigher100thentheNVME10swapfiles"># NOTE: the PRIO zram should be higher (100) then the NVME (10) swapfiles</h3><pre><h4>
 
 ################################### 
 </h4></pre><h3 align='left' id="STEPInstallssh">STEP: Install ssh</h3><pre><h4>
@@ -187,7 +161,7 @@
 ###################################
 </h4></pre><h3 align='left' id="STEPFlatPakinstallapplicationslikeFreeCADInkscapeCURA">STEP: FlatPak install applications like: FreeCAD, Inkscape, CURA</h3><pre><h4>
 ###################################
-# Setup foe flatpak
+# Setup for flatpak
  sudo apt update
  sudo apt install -y flatpak
  sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
@@ -329,6 +303,7 @@ blacklist rtl2830
 #  create an application shortcut configuration template.Run this command to create the launcher description 
 #  context profile file:
  vi ~/.local/share/applications/nrsc5-studio.desktop
+# Note: Replace "&ltYOUR USERID HERE&gt" with your actually userid
 <h4 align='left' id="EXAMPLEnrsc5studiodesktopfilecontents">EXAMPLE: nrsc5-studio.desktop file contents
 </h4><pre><p style="border:3px; border-style:solid; border-color:green; padding: 0em;"><span style="white-space: nowrap;">
 [Desktop Entry]</span>
@@ -336,12 +311,12 @@ Version=1.0
 Type=Application
 Name=NRSC5 HD Radio Studio
 Comment=Graphical HD Radio Decoder Suite for RTL-SDR
-Exec=env WGPU_BACKEND=gl /home/soroka/github/nrsc5-studio/target/release/nrsc5-studio
-Icon=/home/$USER/github/nrsc5-studio/packaging/linux/icons/hicolor/256x256/apps/nrsc5-studio.png
+Exec=env WGPU_BACKEND=gl /home/&ltYOUR USERID HERE&gt/github/nrsc5-studio/target/release/nrsc5-studio
+Icon=/home/&ltYOUR USERD HERE&gt/github/nrsc5-studio/packaging/linux/icons/hicolor/256x256/apps/nrsc5-studio.png
 Terminal=false
 Categories=AudioVideo;Receiver;Radio;
 Keywords=SDR;HD;Radio;FM;
-Path=/home/$USER/github/nrsc5-studio
+Path=/home/&ltYOUR USERID HERE&gt/github/nrsc5-studio
 </p><h4>
 
 # To put a direct working clone copy straight onto your visible desktop backdrop, run:
@@ -479,6 +454,73 @@ iface wlan0 inet dhcp
  # then reboot to load the hifiberry driver
 
  sudo reboot
+
+###################################
+</h4></pre><h3 align='left' id="STEPRunningBlenderonthePI">STEP: Running Blender on the PI</h3><pre><h4>
+###################################
+ Blender 3.4.1 is available on bookwork with an "apt install blender"
+ Blender is not available in Trixie
+
+####################
+# Compile the latest level of Blenter for the PI
+ sudo apt update
+ sudo apt install git build-essential cmake libx11-dev libxxf86vm-dev libxcursor-dev libxi-dev libxrandr-dev libxinerama-dev libglew-dev libopenexr-dev libopenimageio-dev libpython3-dev
+ sudo apt install libavdevice-dev libavformat-dev libavcodec-dev libswscale-dev libavutil-dev
+ sudo apt install autoconf automake bison libtool yasm tcl ninja-build meson python3-mako patchelf pkg-config
+ sudo apt install git-lfs
+
+ mkdir -p ~/github
+ cd ~/github
+ GIT_LFS_SKIP_SMUDGE=1;
+ git clone --recursive https://github.com/blender/blender.git ;
+ cd blender;
+ git checkout -b v4.5.0; # or the latest stable version
+ git submodule update --init --recursive;
+ ./build_files/build_environment/install_linux_packages.py --all;
+ make deps
+ make update
+ #git lfs install
+ #git lfs fetch --all; ### git lfs pull
+ #git lfs checkout;
+
+
+ # go to https://download.blender.org/source/ and download the source file and untar the file
+  tar -xf blender-4.5.0.tar.xz
+  cd blender-4.5.0
+  ./build_files/build_environment/install_linux_packages.py --distro-id debian
+
+ mkdir build_pi5;
+ cd build_pi5;
+ cmake .. &#92
+    -DCMAKE_BUILD_TYPE=Release &#92
+    -DWITH_CYCLES=OFF &#92
+    -DWITH_OPENVDB=OFF &#92
+    -DWITH_MOD_OCEAN=OFF &#92
+    -DWITH_AUDASPACE=OFF &#92
+    -DWITH_BLENDER=ON &#92
+    -DWITH_PYTHON_INSTALL=OFF &#92
+    -DWITH_PYTHON_MODULE=OFF &#92
+    -DWITH_INSTALL_PORTABLE=ON &#92
+    -DCMAKE_CXX_FLAGS="-march=armv8-a+crc+crypto -O3" &#92
+    -DCMAKE_C_FLAGS="-march=armv8-a+crc+crypto -O3" &#92
+    -DWITH_VULKAN_BACKEND=ON;
+### Key Flag Breakdown for Performance:
+#    -DCMAKE_BUILD_TYPE=Release: Disables debug symbols, increasing speed.
+#    -DWITH_CYCLES=OFF: Drastically speeds up compilation and reduces memory footprint if you are only modeling.
+#    -march=armv8-a+crc+crypto -O3: Tells GCC to optimize for ARMv8 with CRC and Crypto extensions (supported by Pi 5) and enables aggressive optimization.
+#    -DWITH_VULKAN_BACKEND=ON: Essential for utilizing the Pi 5's improved GPU drivers (via Igalia/Mesa) for viewport modeling.
+#    -DWITH_AUDASPACE=OFF: Removes audio dependencies, unnecessary for modeling.
+ make -j$(nproc) install
+
+
+############
+
+
+# Run with software rendering
+ LIBGL_ALWAYS_SOFTWARE=true blender
+# Run by forcing the openGL level
+ MESA_GL_VERSION_OVERRIDE=3.3 blender
+
 
 ###############################################################################
 ###        END of FILE

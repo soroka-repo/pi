@@ -2,7 +2,7 @@
 ###PROCEDURE: Debian setup for LinuxCNC
 #
 # Peter Soroka   
-###VERSION: PS20260712:1733
+###VERSION: PS20260716:1600
 # 
 ###################################
 ###STEP: Linuxcnc hardware
@@ -61,73 +61,43 @@
  Snap Store  ### to run: /snap/bin/snap-store
  Transmission
 
-################################### 
-###STEP: Running Blender on the PI
-################################### 
- Blender 3.4.1 is available on bookwork with an "apt install blender"
- Blender is not available in Trixie
 
-####################
-# Compile the latest level of Blenter for the PI
- sudo apt update
- sudo apt install git build-essential cmake libx11-dev libxxf86vm-dev libxcursor-dev libxi-dev libxrandr-dev libxinerama-dev libglew-dev libopenexr-dev libopenimageio-dev libpython3-dev 
- sudo apt install libavdevice-dev libavformat-dev libavcodec-dev libswscale-dev libavutil-dev
- sudo apt install autoconf automake bison libtool yasm tcl ninja-build meson python3-mako patchelf pkg-config
- sudo apt install git-lfs 
- 
- mkdir -p ~/github
- cd ~/github
- GIT_LFS_SKIP_SMUDGE=1;
- git clone --recursive https://github.com/blender/blender.git ; 
- cd blender;
- git checkout -b v4.5.0; # or the latest stable version
- git submodule update --init --recursive;
- ./build_files/build_environment/install_linux_packages.py --all;
- make deps
- make update
- #git lfs install
- #git lfs fetch --all; ### git lfs pull
- #git lfs checkout;
- 
- 
- # go to https://download.blender.org/source/ and download the source file and untar the file
-  tar -xf blender-4.5.0.tar.xz  
-  cd blender-4.5.0
-  ./build_files/build_environment/install_linux_packages.py --distro-id debian
-  
- mkdir build_pi5;
- cd build_pi5;
- cmake .. \
-    -DCMAKE_BUILD_TYPE=Release \
-    -DWITH_CYCLES=OFF \
-    -DWITH_OPENVDB=OFF \
-    -DWITH_MOD_OCEAN=OFF \
-    -DWITH_AUDASPACE=OFF \
-    -DWITH_BLENDER=ON \
-    -DWITH_PYTHON_INSTALL=OFF \
-    -DWITH_PYTHON_MODULE=OFF \
-    -DWITH_INSTALL_PORTABLE=ON \
-    -DCMAKE_CXX_FLAGS="-march=armv8-a+crc+crypto -O3" \
-    -DCMAKE_C_FLAGS="-march=armv8-a+crc+crypto -O3" \
-    -DWITH_VULKAN_BACKEND=ON;
-### Key Flag Breakdown for Performance:
-#    -DCMAKE_BUILD_TYPE=Release: Disables debug symbols, increasing speed.
-#    -DWITH_CYCLES=OFF: Drastically speeds up compilation and reduces memory footprint if you are only modeling.
-#    -march=armv8-a+crc+crypto -O3: Tells GCC to optimize for ARMv8 with CRC and Crypto extensions (supported by Pi 5) and enables aggressive optimization.
-#    -DWITH_VULKAN_BACKEND=ON: Essential for utilizing the Pi 5's improved GPU drivers (via Igalia/Mesa) for viewport modeling.
-#    -DWITH_AUDASPACE=OFF: Removes audio dependencies, unnecessary for modeling. 
- make -j$(nproc) install
+###################################
+###STEP: Increase the paging swap space 
+#################################
+# lets add 32g of swap space patched in so you have to have the space on you NVME
+# if not you will need to use gpartd to reduce the / file system the ideal way to do 
+# this would be to boot off a microSD card and move the swap space before the / root
+# file system
 
+# View what we have now
+ free -h
+ swapon --show
+# NOTE: on the Jetson Orin Nano Super we disable the ZRAM on the PI we will leave it active
+# create the swapfile
+ sudo fallocate -l 32G /swapfile
+# set premisssions
+ sudo chmod 600 /swapfile
+# setup swap area
+ sudo mkswap /swapfile
+# Enable the swap
+ sudo swapon /swapfile
+# Make it survive a reboot
+ cat /etc/fstab # this is what you are starting with
+ sudo cp /etc/fstab /etc/fstab.bak # backing it up in case you make a mistake
+ sudo echo '/swapfile none swap sw,pri=10 0 0'|sudo tee -a /etc/fstab # add a line
+ cat /etc/fstab # this should be what you started with plus the line added above
+# view what we have now
+ free -h
+ swapon --show
 
-############
+###EXAMPLE: swapon --show
+NAME           TYPE      SIZE USED PRIO
+/dev/zram0     partition   2G   0B  100
+/dev/nvme0n1p3 partition  32G   0B   10
+###EXAMPLE_END:
 
-
-# Run with software rendering
- LIBGL_ALWAYS_SOFTWARE=true blender
-# Run by forcing the openGL level
- MESA_GL_VERSION_OVERRIDE=3.3 blender
-
-
+# NOTE: the PRIO zram should be higher (100) then the NVME (10) swapfiles
 
 ################################### 
 ###STEP: Install ssh
@@ -152,7 +122,7 @@
 ###################################
 ###STEP: FlatPak install applications like: FreeCAD, Inkscape, CURA
 ###################################
-# Setup foe flatpak
+# Setup for flatpak
  sudo apt update
  sudo apt install -y flatpak
  sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
@@ -293,18 +263,19 @@ blacklist rtl2830
 #  create an application shortcut configuration template.Run this command to create the launcher description 
 #  context profile file:
  vi ~/.local/share/applications/nrsc5-studio.desktop
+# Note: Replace "<YOUR USERID HERE>" with your actually userid
 ###EXAMPLE: nrsc5-studio.desktop file contents 
 [Desktop Entry]
 Version=1.0
 Type=Application
 Name=NRSC5 HD Radio Studio
 Comment=Graphical HD Radio Decoder Suite for RTL-SDR
-Exec=env WGPU_BACKEND=gl /home/soroka/github/nrsc5-studio/target/release/nrsc5-studio
-Icon=/home/$USER/github/nrsc5-studio/packaging/linux/icons/hicolor/256x256/apps/nrsc5-studio.png
+Exec=env WGPU_BACKEND=gl /home/<YOUR USERID HERE>/github/nrsc5-studio/target/release/nrsc5-studio
+Icon=/home/<YOUR USERD HERE>/github/nrsc5-studio/packaging/linux/icons/hicolor/256x256/apps/nrsc5-studio.png
 Terminal=false
 Categories=AudioVideo;Receiver;Radio;
 Keywords=SDR;HD;Radio;FM;
-Path=/home/$USER/github/nrsc5-studio
+Path=/home/<YOUR USERID HERE>/github/nrsc5-studio
 ###EXAMPLE_END:
 
 # To put a direct working clone copy straight onto your visible desktop backdrop, run:
@@ -438,6 +409,73 @@ iface wlan0 inet dhcp
  # then reboot to load the hifiberry driver
 
  sudo reboot
+
+###################################
+###STEP: Running Blender on the PI
+###################################
+ Blender 3.4.1 is available on bookwork with an "apt install blender"
+ Blender is not available in Trixie
+
+####################
+# Compile the latest level of Blenter for the PI
+ sudo apt update
+ sudo apt install git build-essential cmake libx11-dev libxxf86vm-dev libxcursor-dev libxi-dev libxrandr-dev libxinerama-dev libglew-dev libopenexr-dev libopenimageio-dev libpython3-dev
+ sudo apt install libavdevice-dev libavformat-dev libavcodec-dev libswscale-dev libavutil-dev
+ sudo apt install autoconf automake bison libtool yasm tcl ninja-build meson python3-mako patchelf pkg-config
+ sudo apt install git-lfs
+
+ mkdir -p ~/github
+ cd ~/github
+ GIT_LFS_SKIP_SMUDGE=1;
+ git clone --recursive https://github.com/blender/blender.git ;
+ cd blender;
+ git checkout -b v4.5.0; # or the latest stable version
+ git submodule update --init --recursive;
+ ./build_files/build_environment/install_linux_packages.py --all;
+ make deps
+ make update
+ #git lfs install
+ #git lfs fetch --all; ### git lfs pull
+ #git lfs checkout;
+
+
+ # go to https://download.blender.org/source/ and download the source file and untar the file
+  tar -xf blender-4.5.0.tar.xz
+  cd blender-4.5.0
+  ./build_files/build_environment/install_linux_packages.py --distro-id debian
+
+ mkdir build_pi5;
+ cd build_pi5;
+ cmake .. \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DWITH_CYCLES=OFF \
+    -DWITH_OPENVDB=OFF \
+    -DWITH_MOD_OCEAN=OFF \
+    -DWITH_AUDASPACE=OFF \
+    -DWITH_BLENDER=ON \
+    -DWITH_PYTHON_INSTALL=OFF \
+    -DWITH_PYTHON_MODULE=OFF \
+    -DWITH_INSTALL_PORTABLE=ON \
+    -DCMAKE_CXX_FLAGS="-march=armv8-a+crc+crypto -O3" \
+    -DCMAKE_C_FLAGS="-march=armv8-a+crc+crypto -O3" \
+    -DWITH_VULKAN_BACKEND=ON;
+### Key Flag Breakdown for Performance:
+#    -DCMAKE_BUILD_TYPE=Release: Disables debug symbols, increasing speed.
+#    -DWITH_CYCLES=OFF: Drastically speeds up compilation and reduces memory footprint if you are only modeling.
+#    -march=armv8-a+crc+crypto -O3: Tells GCC to optimize for ARMv8 with CRC and Crypto extensions (supported by Pi 5) and enables aggressive optimization.
+#    -DWITH_VULKAN_BACKEND=ON: Essential for utilizing the Pi 5's improved GPU drivers (via Igalia/Mesa) for viewport modeling.
+#    -DWITH_AUDASPACE=OFF: Removes audio dependencies, unnecessary for modeling.
+ make -j$(nproc) install
+
+
+############
+
+
+# Run with software rendering
+ LIBGL_ALWAYS_SOFTWARE=true blender
+# Run by forcing the openGL level
+ MESA_GL_VERSION_OVERRIDE=3.3 blender
+
 
 ###############################################################################
 ###        END of FILE
